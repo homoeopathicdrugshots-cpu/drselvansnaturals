@@ -5,10 +5,10 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # ======================== SECURITY SETTINGS ========================
-SECRET_KEY = 'django-insecure-88e419097511f01645229d01a12d1c410fdfc0b3'
-DEBUG = False
+# All secrets come from environment variables - NEVER hardcode passwords!
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-change-this-in-production')
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-# DIRECTLY SET ALLOWED HOSTS - NO ENVIRONMENT VARIABLE
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
@@ -62,7 +62,6 @@ TEMPLATES = [
 ]
 
 # ======================== DATABASE ========================
-import dj_database_url
 DATABASES = {
     'default': dj_database_url.config(
         default=f'sqlite:///{BASE_DIR / "db.sqlite3"}',
@@ -100,20 +99,24 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CART_SESSION_ID = 'cart'
 
 # ======================== CHECKOUT SETTINGS ========================
-FREE_SHIPPING_THRESHOLD = 800
-DELIVERY_CHARGE = 75
-FORCE_FREE_DELIVERY = True
+FREE_SHIPPING_THRESHOLD = int(os.environ.get('FREE_SHIPPING_THRESHOLD', 800))
+DELIVERY_CHARGE = int(os.environ.get('DELIVERY_CHARGE', 75))
+FORCE_FREE_DELIVERY = os.environ.get('FORCE_FREE_DELIVERY', 'False') == 'True'
 
 # ======================== RAZORPAY PAYMENT SETTINGS ========================
-RAZORPAY_KEY_ID = 'rzp_live_SY6o5bSYNMMhpC'
-RAZORPAY_KEY_SECRET = 'c3KP2OcWjO4thY48aVWle4SR'
+# These MUST be set in environment variables on Render
+RAZORPAY_KEY_ID = os.environ.get('RAZORPAY_KEY_ID', '')
+RAZORPAY_KEY_SECRET = os.environ.get('RAZORPAY_KEY_SECRET', '')
 
 # ======================== EMAIL SETTINGS ========================
+# All email credentials from environment variables
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.hostinger.com'
-EMAIL_PORT = 465
-EMAIL_USE_SSL = True
-EMAIL_HOST_USER = 'care@drselvanshomeopathy.com'
-EMAIL_HOST_PASSWORD = 'Drselvan@2025'
-DEFAULT_FROM_EMAIL = 'Dr Naturals <care@drselvanshomeopathy.com>'
-ORDER_ALERT_EMAIL = 'care@drselvanshomeopathy.com'
+EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.hostinger.com')
+EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 465))
+EMAIL_USE_SSL = os.environ.get('EMAIL_USE_SSL', 'True') == 'True'
+EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'False') == 'True'
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'Dr Naturals <noreply@drnaturals.com>')
+SERVER_EMAIL = os.environ.get('SERVER_EMAIL', 'care@drselvanshomeopathy.com')
+ORDER_ALERT_EMAIL = os.environ.get('ORDER_ALERT_EMAIL', 'care@drselvanshomeopathy.com')
