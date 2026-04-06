@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Verify OTP | Dr Naturals{% endblock %}
+
+{% block content %}
+<div style="max-width: 450px; margin: 120px auto 4rem; padding: 2rem; background: white; border-radius: 40px; box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.1); text-align: center;">
+    <div style="font-size: 4rem; color: #2C6E9E; margin-bottom: 1rem;">
+        <i class="fas fa-key"></i>
+    </div>
+    <div style="margin-bottom: 2rem;">
+        <h1 style="font-size: 2rem; color: #1E3A4D;">Verify Your Account</h1>
+        <p style="color: #5A6E7A;">Enter the 6-digit OTP shown above</p>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div style="background: {% if message.tags == 'success' %}#2C6E9E{% else %}#FEE2E2{% endif %}; color: {% if message.tags == 'success' %}white{% else %}#DC2626{% endif %}; padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem;">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="post" action="{% url 'verify_otp' username %}">
+        {% csrf_token %}
+        
+        <div style="margin-bottom: 1.5rem;">
+            <input type="text" name="otp" maxlength="6" required autofocus style="width: 100%; padding: 0.8rem; border: 1px solid #D0E0F0; border-radius: 12px; text-align: center; letter-spacing: 4px; font-size: 1.2rem;" placeholder="000000">
+        </div>
+
+        <button type="submit" style="width: 100%; background: #2C6E9E; color: white; border: none; padding: 1rem; border-radius: 50px; font-weight: 600; font-size: 1rem; cursor: pointer; transition: all 0.3s;">
+            Verify Account →
+        </button>
+    </form>
+
+    <div style="margin-top: 1.5rem;">
+        <p>Didn't receive the code? <a href="{% url 'register' %}" style="color: #2C6E9E; text-decoration: none;">Try again</a></p>
+    </div>
+</div>
+
+<script>
+    const otpInput = document.querySelector('input[name="otp"]');
+    if (otpInput) {
+        otpInput.addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9]/g, '');
+            if (this.value.length === 6) {
+                this.form.submit();
+            }
+        });
+    }
+</script>
+{% endblock %}

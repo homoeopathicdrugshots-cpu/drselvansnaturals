@@ -1,0 +1,738 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+<style>
+    .breadcrumb {
+        max-width: 1240px;
+        margin: 100px auto 0;
+        padding: 1rem 2rem;
+    }
+    .breadcrumb a {
+        color: #4C7840;
+        text-decoration: none;
+        font-size: 0.85rem;
+    }
+    .breadcrumb span {
+        color: #000000;
+        font-size: 0.85rem;
+    }
+
+    .product-page-shell {
+        background:
+            radial-gradient(circle at top left, rgba(76, 120, 64, 0.08), transparent 22%),
+            radial-gradient(circle at right, rgba(189, 162, 103, 0.10), transparent 24%),
+            linear-gradient(180deg, #fcfbf7 0%, #f8f3ea 100%);
+        padding-bottom: 4rem;
+    }
+
+    .product-detail-container {
+        max-width: 1240px;
+        margin: 1.5rem auto 2rem;
+        padding: 2rem;
+        background: rgba(255, 255, 255, 0.94);
+        border: 1px solid rgba(76, 120, 64, 0.10);
+        border-radius: 40px;
+        box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.10);
+        backdrop-filter: blur(8px);
+    }
+
+    .product-detail-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+        align-items: start;
+    }
+
+    @keyframes floatSlow {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-6px); }
+    }
+
+    @keyframes strikeReveal {
+        from {
+            transform: translateY(-50%) scaleX(0);
+            opacity: 0.35;
+        }
+        to {
+            transform: translateY(-50%) scaleX(1);
+            opacity: 1;
+        }
+    }
+
+    @keyframes fadeLift {
+        from {
+            opacity: 0;
+            transform: translateY(14px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .product-gallery {
+        animation: floatSlow 4.5s ease-in-out infinite;
+    }
+
+    .main-image-container {
+        width: 100%;
+        height: 500px;
+        border-radius: 30px;
+        overflow: hidden;
+        box-shadow: 0 18px 36px -18px rgba(0, 0, 0, 0.18);
+        background: linear-gradient(135deg, #eef4ea, #f7f2e9);
+        border: 1px solid rgba(76, 120, 64, 0.12);
+    }
+
+    .main-image {
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        transition: transform 0.55s ease;
+    }
+
+    .main-image:hover {
+        transform: scale(1.04);
+    }
+
+    .thumbnail-gallery {
+        display: flex;
+        gap: 12px;
+        margin-top: 18px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .thumbnail {
+        width: 82px;
+        height: 82px;
+        border-radius: 16px;
+        overflow: hidden;
+        cursor: pointer;
+        border: 2px solid transparent;
+        transition: all 0.3s ease;
+        background: #E8F0E4;
+        box-shadow: 0 8px 18px -14px rgba(0,0,0,0.22);
+    }
+
+    .thumbnail img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .thumbnail:hover {
+        transform: translateY(-3px);
+        border-color: #4C7840;
+    }
+
+    .thumbnail.active {
+        border-color: #4C7840;
+        box-shadow: 0 8px 18px -10px rgba(76, 120, 64, 0.35);
+    }
+
+    .product-info-detail {
+        animation: fadeLift 0.7s ease;
+    }
+
+    .product-category {
+        display: inline-block;
+        background: #E8F0E4;
+        padding: 0.42rem 1rem;
+        border-radius: 999px;
+        font-size: 0.76rem;
+        font-weight: 700;
+        color: #4C7840;
+        letter-spacing: 0.03em;
+        margin-bottom: 1rem;
+    }
+
+    .product-info-detail h1 {
+        font-size: 2.4rem;
+        line-height: 1.1;
+        color: #142129;
+        margin-bottom: 0.8rem;
+        font-family: 'Playfair Display', serif;
+    }
+
+    .quantity-label-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+        padding: 0.55rem 0.95rem;
+        border-radius: 999px;
+        background: linear-gradient(135deg, #f5efe2, #efe7d8);
+        color: #7a6035;
+        font-size: 0.82rem;
+        font-weight: 700;
+        border: 1px solid rgba(189, 162, 103, 0.22);
+    }
+
+    .product-price-block {
+        margin: 0.7rem 0 1rem;
+        padding: 1rem 1.1rem;
+        border-radius: 22px;
+        background: linear-gradient(135deg, #fbfcfa, #f4f8f1);
+        border: 1px solid rgba(76, 120, 64, 0.10);
+    }
+
+    .product-price-row {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        flex-wrap: wrap;
+    }
+
+    .product-price {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #111;
+        letter-spacing: -0.03em;
+    }
+
+    .original-price-wrap {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        padding: 0.1rem 0.2rem;
+    }
+
+    .original-price {
+        font-size: 1.08rem;
+        color: #8A8A8A;
+        font-weight: 500;
+    }
+
+    .strike-line {
+        position: absolute;
+        left: 0;
+        top: 50%;
+        width: 100%;
+        height: 2px;
+        background: #8A8A8A;
+        transform: translateY(-50%) scaleX(0);
+        transform-origin: left center;
+        animation: strikeReveal 1.1s ease forwards;
+        border-radius: 999px;
+    }
+
+    .discount-badge {
+        background: #E8F5E9;
+        color: #2E7D32;
+        padding: 0.38rem 0.85rem;
+        border-radius: 999px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        box-shadow: 0 10px 18px -14px rgba(46, 125, 50, 0.45);
+    }
+
+    .short-desc {
+        font-size: 1rem;
+        color: #4A4A4A;
+        line-height: 1.8;
+        margin: 1rem 0 1.4rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #E8F0E4;
+    }
+
+    .content-card {
+        margin: 1.2rem 0;
+        padding: 1.1rem 1.2rem;
+        border-radius: 22px;
+        background: #fff;
+        border: 1px solid rgba(76, 120, 64, 0.10);
+        box-shadow: 0 14px 28px -24px rgba(0, 0, 0, 0.25);
+    }
+
+    .content-card h3 {
+        font-size: 1.08rem;
+        margin-bottom: 0.75rem;
+        color: #18252f;
+        font-family: 'Playfair Display', serif;
+    }
+
+    .content-card p {
+        color: #4A4A4A;
+        line-height: 1.8;
+        margin: 0;
+    }
+
+    .benefits-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.8rem;
+    }
+
+    .benefit-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.7rem;
+        padding: 0.85rem 0.9rem;
+        border-radius: 18px;
+        background: linear-gradient(135deg, #f7fbf5, #eef6eb);
+        border: 1px solid rgba(76, 120, 64, 0.08);
+    }
+
+    .benefit-item i {
+        color: #4C7840;
+        margin-top: 0.2rem;
+    }
+
+    .benefit-item span {
+        color: #30404a;
+        line-height: 1.6;
+        font-size: 0.94rem;
+        font-weight: 500;
+    }
+
+    .min-qty-warning {
+        background: #FFF6E9;
+        border-left: 4px solid #D6941F;
+        padding: 0.9rem 1rem;
+        border-radius: 14px;
+        margin: 1.2rem 0;
+        font-size: 0.87rem;
+        color: #A55D00;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+    }
+
+    .quantity-selector {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin: 1.5rem 0;
+    }
+
+    .quantity-selector label {
+        font-weight: 600;
+        color: #000000;
+    }
+
+    .qty-control {
+        display: flex;
+        align-items: center;
+        border: 1px solid #D0E0D0;
+        border-radius: 50px;
+        overflow: hidden;
+        background: #fff;
+    }
+
+    .qty-btn {
+        width: 42px;
+        height: 42px;
+        background: white;
+        border: none;
+        font-size: 1.2rem;
+        cursor: pointer;
+        color: #4C7840;
+        transition: background 0.2s ease;
+    }
+
+    .qty-btn:hover {
+        background: #E8F0E4;
+    }
+
+    .qty-value {
+        width: 52px;
+        text-align: center;
+        font-weight: 700;
+        color: #000000;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        margin: 2rem 0;
+    }
+
+    .btn-add-cart,
+    .btn-buy-now {
+        flex: 1;
+        padding: 1rem;
+        border-radius: 999px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.55rem;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .btn-add-cart {
+        background: linear-gradient(135deg, #4C7840, #35592c);
+        color: white;
+        border: none;
+        box-shadow: 0 16px 28px -18px rgba(76, 120, 64, 0.55);
+    }
+
+    .btn-buy-now {
+        background: transparent;
+        border: 2px solid #4C7840;
+        color: #4C7840;
+    }
+
+    .btn-add-cart:hover,
+    .btn-buy-now:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 14px 24px -14px rgba(76, 120, 64, 0.45);
+    }
+
+    .btn-buy-now:hover {
+        background: #4C7840;
+        color: white;
+    }
+
+    .product-meta {
+        margin-top: 1.8rem;
+        padding-top: 1.4rem;
+        border-top: 1px solid #E8F0E4;
+        display: grid;
+        gap: 0.8rem;
+    }
+
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        font-size: 0.9rem;
+        color: #4A4A4A;
+        padding: 0.75rem 0.9rem;
+        border-radius: 16px;
+        background: #fafcf9;
+        border: 1px solid rgba(76, 120, 64, 0.08);
+    }
+
+    .meta-item i {
+        width: 24px;
+        color: #4C7840;
+    }
+
+    .suggested-section {
+        max-width: 1240px;
+        margin: 3rem auto 0;
+        padding: 0 2rem;
+    }
+
+    .suggested-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .suggested-header h2 {
+        font-size: 2rem;
+        color: #18252f;
+        font-family: 'Playfair Display', serif;
+    }
+
+    .suggested-header p {
+        color: #65757d;
+    }
+
+    .suggested-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.8rem;
+    }
+
+    .suggested-card {
+        background: white;
+        border-radius: 28px;
+        overflow: hidden;
+        cursor: pointer;
+        border: 1px solid rgba(76, 120, 64, 0.1);
+        transition: all 0.3s;
+        box-shadow: 0 18px 36px -28px rgba(0, 0, 0, 0.25);
+    }
+
+    .suggested-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 18px 32px -20px rgba(0, 0, 0, 0.14);
+        border-color: #4C7840;
+    }
+
+    .suggested-img {
+        height: 220px;
+        background-size: cover;
+        background-position: center;
+    }
+
+    .suggested-info {
+        padding: 1rem;
+    }
+
+    .suggested-info h4 {
+        font-size: 1rem;
+        color: #000000;
+        margin-bottom: 0.6rem;
+    }
+
+    .suggested-price-row {
+        display: flex;
+        align-items: center;
+        gap: 0.55rem;
+        flex-wrap: wrap;
+    }
+
+    .suggested-price {
+        font-weight: 700;
+        color: #000000;
+    }
+
+    .suggested-original-wrap {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .suggested-original-price {
+        color: #8A8A8A;
+        font-size: 0.92rem;
+    }
+
+    .suggested-strike-line {
+        position: absolute;
+        left: 0;
+        top: 50%;
+        width: 100%;
+        height: 2px;
+        background: #8A8A8A;
+        transform: translateY(-50%);
+        border-radius: 999px;
+    }
+
+    @media (max-width: 900px) {
+        .product-detail-grid {
+            grid-template-columns: 1fr;
+        }
+        .main-image-container {
+            height: 360px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .breadcrumb,
+        .suggested-section {
+            padding: 0 1rem;
+        }
+        .product-detail-container {
+            padding: 1.2rem;
+            margin: 1rem;
+            border-radius: 28px;
+        }
+        .benefits-grid {
+            grid-template-columns: 1fr;
+        }
+        .action-buttons {
+            flex-direction: column;
+        }
+        .thumbnail {
+            width: 64px;
+            height: 64px;
+        }
+    }
+</style>
+
+<div class="product-page-shell">
+    <div class="breadcrumb">
+        <a href="{% url 'index' %}">Home</a> /
+        <a href="
+            {% if product.category == 'Skin' %}{% url 'skincare' %}
+            {% elif product.category == 'Hair' %}{% url 'haircare' %}
+            {% elif product.category == 'Medicines' %}{% url 'medicines' %}
+            {% else %}{% url 'index' %}{% endif %}
+        ">{{ product.get_category_display }}</a> /
+        <span>{{ product.name }}</span>
+    </div>
+
+    <div class="product-detail-container">
+        <div class="product-detail-grid">
+            <div class="product-gallery">
+                <div class="main-image-container">
+                    <div class="main-image" id="mainImage" style="background-image: url('{% if product.image %}{{ product.image.url }}{% else %}https://placehold.co/600x600/E8F0E4/4C7840?text={{ product.name|slice:":20" }}{% endif %}');"></div>
+                </div>
+
+                <div class="thumbnail-gallery">
+                    {% if product.image %}
+                    <div class="thumbnail" onclick="changeImage('{{ product.image.url }}', this)">
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                    </div>
+                    {% endif %}
+
+                    {% for img in product_images %}
+                    <div class="thumbnail" onclick="changeImage('{{ img.image.url }}', this)">
+                        <img src="{{ img.image.url }}" alt="{{ product.name }}">
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="product-info-detail">
+                <span class="product-category">{{ product.get_category_display }}</span>
+                <h1>{{ product.name }}</h1>
+
+                {% if product.quantity_label %}
+                <div class="quantity-label-badge">
+                    <i class="fas fa-weight-hanging"></i>
+                    <span>{{ product.quantity_label }}</span>
+                </div>
+                {% endif %}
+
+                <div class="product-price-block">
+                    <div class="product-price-row">
+                        <div class="product-price">₹{{ product.price|floatformat:2 }}</div>
+
+                        {% if product.original_price %}
+                        <div class="original-price-wrap">
+                            <div class="original-price">₹{{ product.original_price|floatformat:2 }}</div>
+                            <span class="strike-line"></span>
+                        </div>
+                        {% endif %}
+
+                        {% if product.discount_percent %}
+                        <div class="discount-badge">{{ product.discount_percent }}% OFF</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="short-desc">{{ product.short_desc|default:product.description|slice:":180" }}</div>
+
+                <div class="content-card">
+                    <h3>Product Description</h3>
+                    <p>{{ product.description }}</p>
+                </div>
+
+                {% if product.benefits %}
+                <div class="content-card">
+                    <h3>Benefits</h3>
+                    <div class="benefits-grid">
+                        {% for benefit in product.get_benefits_list %}
+                        <div class="benefit-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>{{ benefit }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if product.category == 'Medicines' and product.dosage %}
+                <div class="content-card">
+                    <h3>Dosage</h3>
+                    <p>{{ product.dosage }}</p>
+                </div>
+                {% endif %}
+
+                {% if product.category != 'Medicines' and product.usage %}
+                <div class="content-card">
+                    <h3>Usage</h3>
+                    <p>{{ product.usage }}</p>
+                </div>
+                {% endif %}
+
+                <div class="min-qty-warning">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Minimum order quantity for this product is 2 pieces</span>
+                </div>
+
+                <form method="post" action="{% url 'add_to_cart' product.id %}" id="cartForm">
+                    {% csrf_token %}
+                    <div class="quantity-selector">
+                        <label>Quantity (Min 2):</label>
+                        <div class="qty-control">
+                            <button type="button" class="qty-btn" id="qtyMinus">-</button>
+                            <span class="qty-value" id="qtyValue">2</span>
+                            <button type="button" class="qty-btn" id="qtyPlus">+</button>
+                        </div>
+                    </div>
+                    <input type="hidden" name="quantity" id="quantityInput" value="2">
+
+                    <div class="action-buttons">
+                        <button type="submit" name="action" value="cart" class="btn-add-cart" id="addToCartBtn">
+                            <i class="fas fa-shopping-bag"></i> Add to Cart
+                        </button>
+                        <button type="submit" name="action" value="checkout" class="btn-buy-now" id="buyNowBtn">
+                            <i class="fas fa-bolt"></i> Buy Now
+                        </button>
+                    </div>
+                </form>
+
+                <div class="product-meta">
+                    <div class="meta-item"><i class="fas fa-truck"></i> Free shipping on orders above ₹800</div>
+                    <div class="meta-item"><i class="fas fa-exchange-alt"></i> 7-day easy returns</div>
+                    <div class="meta-item"><i class="fas fa-shield-alt"></i> 100% Authentic Products</div>
+                    <div class="meta-item"><i class="fas fa-leaf"></i> Crafted with care and quality ingredients</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if related_products %}
+    <div class="suggested-section">
+        <div class="suggested-header">
+            <h2>You May Also Like</h2>
+            <p>Discover more from the collection</p>
+        </div>
+
+        <div class="suggested-grid">
+            {% for related in related_products %}
+            <div class="suggested-card" onclick="location.href='{% url 'product_detail' related.slug %}'">
+                <div class="suggested-img" style="background-image: url('{% if related.image %}{{ related.image.url }}{% else %}https://placehold.co/400x400/E8F0E4/4C7840?text={{ related.name|slice:":15" }}{% endif %}');"></div>
+                <div class="suggested-info">
+                    <h4>{{ related.name }}</h4>
+                    <div class="suggested-price-row">
+                        <div class="suggested-price">₹{{ related.price|floatformat:2 }}</div>
+                        {% if related.original_price %}
+                        <div class="suggested-original-wrap">
+                            <div class="suggested-original-price">₹{{ related.original_price|floatformat:2 }}</div>
+                            <span class="suggested-strike-line"></span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let quantity = 2;
+    const qtyValue = document.getElementById('qtyValue');
+    const quantityInput = document.getElementById('quantityInput');
+
+    document.getElementById('qtyMinus').onclick = function() {
+        if (quantity > 2) {
+            quantity--;
+            qtyValue.innerText = quantity;
+            quantityInput.value = quantity;
+        }
+    };
+
+    document.getElementById('qtyPlus').onclick = function() {
+        quantity++;
+        qtyValue.innerText = quantity;
+        quantityInput.value = quantity;
+    };
+
+    const firstThumb = document.querySelector('.thumbnail');
+    if (firstThumb) firstThumb.classList.add('active');
+});
+
+function changeImage(imageUrl, element) {
+    document.getElementById('mainImage').style.backgroundImage = `url('${imageUrl}')`;
+    document.querySelectorAll('.thumbnail').forEach(thumb => thumb.classList.remove('active'));
+    element.classList.add('active');
+}
+</script>
+{% endblock %}

@@ -1,0 +1,325 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Register | Dr Naturals{% endblock %}
+
+{% block content %}
+<style>
+    .register-shell {
+        min-height: calc(100vh - 120px);
+        padding: 120px 20px 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background:
+            radial-gradient(circle at top left, rgba(126, 156, 88, 0.22), transparent 32%),
+            radial-gradient(circle at bottom right, rgba(76, 120, 64, 0.18), transparent 28%),
+            linear-gradient(180deg, #f8f3e9 0%, #efe5d4 100%);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .register-shell::before,
+    .register-shell::after {
+        content: "";
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(24px);
+        opacity: 0.35;
+        pointer-events: none;
+    }
+
+    .register-shell::before {
+        width: 260px;
+        height: 260px;
+        background: rgba(136, 168, 90, 0.22);
+        top: 40px;
+        left: -80px;
+    }
+
+    .register-shell::after {
+        width: 320px;
+        height: 320px;
+        background: rgba(76, 120, 64, 0.16);
+        right: -90px;
+        bottom: -70px;
+    }
+
+    .register-card {
+        width: 100%;
+        max-width: 620px;
+        position: relative;
+        z-index: 1;
+        background: rgba(255, 252, 246, 0.88);
+        border: 1px solid rgba(100, 129, 75, 0.16);
+        border-radius: 34px;
+        overflow: hidden;
+        backdrop-filter: blur(14px);
+        box-shadow: 0 32px 80px -28px rgba(51, 63, 37, 0.28);
+        animation: registerFadeUp 0.8s ease;
+    }
+
+    .register-top {
+        padding: 2.4rem 2.2rem 1.4rem;
+        text-align: center;
+        background: linear-gradient(135deg, rgba(255,255,255,0.72), rgba(232,240,228,0.88));
+        border-bottom: 1px solid rgba(100, 129, 75, 0.12);
+    }
+
+    .register-mark {
+        width: 84px;
+        height: 84px;
+        margin: 0 auto 1rem;
+        border-radius: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #4C7840, #86a760);
+        color: white;
+        font-size: 2rem;
+        box-shadow: 0 20px 36px -16px rgba(76, 120, 64, 0.48);
+        animation: floatGlow 3s ease-in-out infinite;
+    }
+
+    .register-kicker {
+        letter-spacing: 0.18rem;
+        text-transform: uppercase;
+        font-size: 0.72rem;
+        color: #6b8350;
+        margin-bottom: 0.6rem;
+        font-weight: 700;
+    }
+
+    .register-top h1 {
+        font-size: 2.2rem;
+        color: #23301f;
+        margin-bottom: 0.45rem;
+        line-height: 1.1;
+    }
+
+    .register-top p {
+        color: #617056;
+        font-size: 0.97rem;
+        max-width: 420px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+
+    .register-body {
+        padding: 1.9rem 2.2rem 2.2rem;
+    }
+
+    .register-alert {
+        background: #fff3f1;
+        color: #b9382d;
+        border: 1px solid #ffd2cb;
+        border-radius: 18px;
+        padding: 0.95rem 1rem;
+        margin-bottom: 1rem;
+        font-size: 0.92rem;
+        line-height: 1.55;
+        animation: shakeIn 0.35s ease;
+    }
+
+    .register-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem 1.1rem;
+    }
+
+    .register-field {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .register-field.full {
+        grid-column: 1 / -1;
+    }
+
+    .register-field label {
+        margin-bottom: 0.48rem;
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #2b3726;
+    }
+
+    .register-field input {
+        width: 100%;
+        padding: 0.98rem 1rem;
+        border: 1px solid #d8ddce;
+        border-radius: 18px;
+        background: rgba(255,255,255,0.95);
+        font-size: 0.95rem;
+        color: #273222;
+        outline: none;
+        transition: all 0.26s ease;
+    }
+
+    .register-field input::placeholder {
+        color: #97a08f;
+    }
+
+    .register-field input:focus {
+        border-color: #4C7840;
+        box-shadow: 0 0 0 4px rgba(76, 120, 64, 0.12);
+        transform: translateY(-1px);
+        background: #fff;
+    }
+
+    .register-help {
+        font-size: 0.8rem;
+        color: #76826d;
+        margin-top: 0.4rem;
+    }
+
+    .register-submit {
+        margin-top: 1.4rem;
+        width: 100%;
+        border: none;
+        border-radius: 999px;
+        padding: 1rem 1.1rem;
+        font-size: 1rem;
+        font-weight: 700;
+        color: white;
+        cursor: pointer;
+        background: linear-gradient(135deg, #4C7840, #74995b);
+        box-shadow: 0 20px 30px -16px rgba(76, 120, 64, 0.45);
+        transition: all 0.28s ease;
+    }
+
+    .register-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 24px 36px -16px rgba(76, 120, 64, 0.52);
+    }
+
+    .register-footer {
+        margin-top: 1.4rem;
+        text-align: center;
+        color: #617056;
+        font-size: 0.94rem;
+    }
+
+    .register-footer a {
+        color: #4C7840;
+        text-decoration: none;
+        font-weight: 700;
+    }
+
+    @keyframes registerFadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(28px) scale(0.985);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    @keyframes floatGlow {
+        0% { transform: translateY(0); }
+        50% { transform: translateY(-5px); }
+        100% { transform: translateY(0); }
+    }
+
+    @keyframes shakeIn {
+        0% { transform: translateX(-4px); opacity: 0.6; }
+        50% { transform: translateX(4px); }
+        100% { transform: translateX(0); opacity: 1; }
+    }
+
+    @media (max-width: 640px) {
+        .register-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .register-body,
+        .register-top {
+            padding-left: 1.2rem;
+            padding-right: 1.2rem;
+        }
+
+        .register-top h1 {
+            font-size: 1.8rem;
+        }
+    }
+</style>
+
+<div class="register-shell">
+    <div class="register-card">
+        <div class="register-top">
+            <div class="register-mark">
+                <i class="fas fa-leaf"></i>
+            </div>
+            <div class="register-kicker">Dr Naturals</div>
+            <h1>Create Your Account</h1>
+            <p>Register once to save your cart, checkout faster, and return anytime to continue your wellness journey.</p>
+        </div>
+
+        <div class="register-body">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="register-alert">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+
+            {% if form.errors %}
+                <div class="register-alert">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <div><strong>{{ field.label }}:</strong> {{ error }}</div>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <div>{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <form method="post" action="{% url 'register' %}">
+                {% csrf_token %}
+
+                <div class="register-grid">
+                    <div class="register-field">
+                        <label for="first_name">First Name</label>
+                        <input id="first_name" type="text" name="first_name" value="{{ form.first_name.value|default:'' }}" placeholder="Enter your first name" required>
+                    </div>
+
+                    <div class="register-field">
+                        <label for="last_name">Last Name</label>
+                        <input id="last_name" type="text" name="last_name" value="{{ form.last_name.value|default:'' }}" placeholder="Enter your last name">
+                    </div>
+
+                    <div class="register-field full">
+                        <label for="email">Email Address</label>
+                        <input id="email" type="email" name="email" value="{{ form.email.value|default:'' }}" placeholder="Enter your email address" required>
+                    </div>
+
+                    <div class="register-field full">
+                        <label for="phone">Phone Number</label>
+                        <input id="phone" type="tel" name="phone" value="{{ form.phone.value|default:'' }}" placeholder="Enter your 10-digit mobile number" required>
+                        <div class="register-help">Only phone number and email must be unique.</div>
+                    </div>
+
+                    <div class="register-field">
+                        <label for="password1">Password</label>
+                        <input id="password1" type="password" name="password1" placeholder="Create password" required>
+                    </div>
+
+                    <div class="register-field">
+                        <label for="password2">Confirm Password</label>
+                        <input id="password2" type="password" name="password2" placeholder="Confirm password" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="register-submit">Create Account</button>
+            </form>
+
+            <div class="register-footer">
+                Already have an account?
+                <a href="{% url 'login' %}">Sign In</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

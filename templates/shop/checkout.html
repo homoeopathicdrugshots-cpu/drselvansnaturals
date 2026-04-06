@@ -1,0 +1,413 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Checkout | Dr Naturals{% endblock %}
+
+{% block content %}
+<style>
+    .checkout-container {
+        max-width: 1200px;
+        margin: 100px auto 4rem;
+        padding: 0 2rem;
+    }
+    .checkout-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    .checkout-header h1 {
+        font-size: 2.5rem;
+        color: #000000;
+        margin-bottom: 0.5rem;
+        font-family: 'Playfair Display', serif;
+    }
+    .checkout-header p {
+        color: #4A4A4A;
+    }
+    .checkout-grid {
+        display: grid;
+        grid-template-columns: 1fr 1.2fr;
+        gap: 2rem;
+    }
+    .form-section {
+        background: white;
+        border-radius: 28px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px -12px rgba(0,0,0,0.08);
+        border: 1px solid rgba(76, 120, 64, 0.1);
+    }
+    .form-section h2 {
+        font-size: 1.3rem;
+        color: #000000;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #E8F0E4;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .form-section h2 i {
+        color: #4C7840;
+    }
+    .form-group {
+        margin-bottom: 1rem;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: #000000;
+    }
+    .form-group label .required {
+        color: #e74c3c;
+    }
+    .form-control,
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        border: 1px solid #D0E0D0;
+        border-radius: 12px;
+        font-family: inherit;
+        font-size: 0.95rem;
+        transition: all 0.3s;
+        background: #FFFFFF;
+        box-sizing: border-box;
+    }
+    .form-control:focus,
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+        outline: none;
+        border-color: #4C7840;
+        box-shadow: 0 0 0 3px rgba(76, 120, 64, 0.1);
+    }
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+    .order-summary {
+        background: white;
+        border-radius: 28px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px -12px rgba(0,0,0,0.08);
+        position: sticky;
+        top: 100px;
+        height: fit-content;
+        border: 1px solid rgba(76, 120, 64, 0.1);
+    }
+    .order-summary h2 {
+        font-size: 1.3rem;
+        color: #000000;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #E8F0E4;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .order-summary h2 i {
+        color: #4C7840;
+    }
+    .order-items {
+        max-height: 300px;
+        overflow-y: auto;
+        margin-bottom: 1rem;
+    }
+    .order-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.8rem 0;
+        border-bottom: 1px solid #E8F0E4;
+        gap: 1rem;
+    }
+    .order-item-name {
+        font-weight: 500;
+        color: #000000;
+    }
+    .order-item-qty {
+        font-size: 0.8rem;
+        color: #4A4A4A;
+    }
+    .order-item-price {
+        font-weight: 600;
+        color: #4C7840;
+        white-space: nowrap;
+    }
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.8rem 0;
+        color: #4A4A4A;
+        font-size: 1rem;
+    }
+    .shipping-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.8rem 0;
+        border-bottom: 1px solid #E8F0E4;
+        font-size: 1rem;
+    }
+    .total-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 1rem 0;
+        border-top: 2px solid #E8F0E4;
+        margin-top: 0.5rem;
+        font-weight: 700;
+        font-size: 1.2rem;
+    }
+    .total-row span:last-child {
+        color: #4C7840;
+        font-size: 1.5rem;
+        font-weight: 800;
+    }
+    .btn-place-order {
+        width: 100%;
+        background: linear-gradient(135deg, #4C7840, #3A5E30);
+        color: white;
+        border: none;
+        padding: 1rem;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s;
+        margin-top: 1rem;
+    }
+    .btn-place-order:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px -8px rgba(76, 120, 64, 0.4);
+    }
+    .shipping-progress {
+        background: #F5F0E8;
+        border-radius: 16px;
+        padding: 1rem;
+        margin: 1rem 0;
+    }
+    .shipping-progress-text {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+        font-size: 0.75rem;
+        gap: 1rem;
+    }
+    .progress-bar-container {
+        background: #E8F0E4;
+        border-radius: 10px;
+        height: 6px;
+        overflow: hidden;
+    }
+    .progress-bar-fill {
+        background: linear-gradient(90deg, #4C7840, #6A9C5A);
+        height: 100%;
+        border-radius: 10px;
+        transition: width 0.3s ease;
+        width: 0%;
+    }
+    .free-shipping-badge {
+        background: #E8F5E9;
+        padding: 0.8rem;
+        border-radius: 12px;
+        text-align: center;
+        margin: 1rem 0;
+        color: #2E7D32;
+        font-weight: 600;
+    }
+    .payment-icons {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+    .payment-icons i {
+        font-size: 2rem;
+        color: #4A4A4A;
+        transition: all 0.3s;
+    }
+    .payment-icons i:hover {
+        color: #4C7840;
+    }
+    .alert {
+        padding: 0.85rem 1rem;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+    }
+    .alert-success {
+        background: #E8F5E9;
+        color: #2E7D32;
+    }
+    .alert-error,
+    .alert-danger {
+        background: #FFEBEE;
+        color: #C62828;
+    }
+    @media (max-width: 768px) {
+        .checkout-grid {
+            grid-template-columns: 1fr;
+        }
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="checkout-container">
+    <div class="checkout-header">
+        <h1>Checkout</h1>
+        <p>Complete your order securely</p>
+    </div>
+
+    <div class="checkout-grid">
+        <div class="form-section">
+            <h2><i class="fas fa-user"></i> Shipping Information</h2>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post" id="checkoutForm">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label>Full Name <span class="required">*</span></label>
+                    {{ form.name }}
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Email Address <span class="required">*</span></label>
+                        {{ form.email }}
+                    </div>
+                    <div class="form-group">
+                        <label>Mobile Number <span class="required">*</span></label>
+                        {{ form.phone }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Address <span class="required">*</span></label>
+                    {{ form.address }}
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>City <span class="required">*</span></label>
+                        {{ form.city }}
+                    </div>
+                    <div class="form-group">
+                        <label>State <span class="required">*</span></label>
+                        {{ form.state }}
+                    </div>
+                    <div class="form-group">
+                        <label>PIN Code <span class="required">*</span></label>
+                        {{ form.pincode }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Order Notes (Optional)</label>
+                    {{ form.order_notes }}
+                </div>
+            </form>
+        </div>
+
+        <div class="order-summary">
+            <h2><i class="fas fa-shopping-bag"></i> Order Summary</h2>
+
+            <div class="order-items">
+                {% for item in cart %}
+                <div class="order-item">
+                    <div>
+                        <div class="order-item-name">{{ item.product.name }}</div>
+                        <div class="order-item-qty">Qty: {{ item.quantity }}</div>
+                    </div>
+                    <div class="order-item-price">₹{{ item.total_price|floatformat:2 }}</div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="summary-row">
+                <span>Subtotal</span>
+                <span id="subtotalDisplay">₹0.00</span>
+            </div>
+
+            <div class="shipping-row">
+                <span>Delivery Charges</span>
+                <span id="deliveryDisplay">₹0.00</span>
+            </div>
+
+            <div class="total-row">
+                <span>Grand Total</span>
+                <span id="grandTotalDisplay">₹0.00</span>
+            </div>
+
+            <div id="progressContainer" class="shipping-progress">
+                <div class="shipping-progress-text">
+                    <span><i class="fas fa-truck"></i> Add ₹<span id="remainingNeeded">0</span> more for FREE Shipping</span>
+                    <span id="progressAmount">₹0.00 / ₹800.00</span>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill" id="progressFillBar" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div id="freeBadge" class="free-shipping-badge" style="display: none;">
+                <i class="fas fa-check-circle"></i> Congratulations! You've got FREE Shipping
+            </div>
+
+            <button type="submit" form="checkoutForm" class="btn-place-order">
+                <i class="fas fa-credit-card"></i> Proceed to Payment
+            </button>
+
+            <div class="payment-icons">
+                <i class="fab fa-cc-visa"></i>
+                <i class="fab fa-cc-mastercard"></i>
+                <i class="fab fa-cc-amex"></i>
+                <i class="fab fa-google-pay"></i>
+                <i class="fab fa-apple-pay"></i>
+                <i class="fas fa-rupee-sign"></i>
+            </div>
+            <p style="text-align: center; font-size: 0.7rem; margin-top: 0.5rem;">
+                <i class="fas fa-lock"></i> 100% Secure Payment
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+    const subtotal = parseFloat('{{ subtotal|default:0 }}') || 0;
+    const delivery = parseFloat('{{ delivery_charge|default:0 }}') || 0;
+    const grandTotal = parseFloat('{{ grand_total|default:0 }}') || 0;
+    const freeShippingThreshold = 800;
+
+    document.getElementById('subtotalDisplay').innerText = '₹' + subtotal.toFixed(2);
+
+    if (delivery === 0) {
+        document.getElementById('deliveryDisplay').innerHTML = '<span style="color: #4CAF50;">FREE</span>';
+    } else {
+        document.getElementById('deliveryDisplay').innerText = '₹' + delivery.toFixed(2);
+    }
+
+    document.getElementById('grandTotalDisplay').innerText = '₹' + grandTotal.toFixed(2);
+
+    if (subtotal >= freeShippingThreshold) {
+        document.getElementById('progressContainer').style.display = 'none';
+        document.getElementById('freeBadge').style.display = 'block';
+    } else {
+        const remaining = freeShippingThreshold - subtotal;
+        const percentage = Math.min((subtotal / freeShippingThreshold) * 100, 100);
+
+        document.getElementById('remainingNeeded').innerText = remaining.toFixed(2);
+        document.getElementById('progressAmount').innerHTML = '₹' + subtotal.toFixed(2) + ' / ₹800.00';
+        document.getElementById('progressFillBar').style.width = percentage + '%';
+        document.getElementById('progressContainer').style.display = 'block';
+        document.getElementById('freeBadge').style.display = 'none';
+    }
+</script>
+{% endblock %}

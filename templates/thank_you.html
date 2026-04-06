@@ -1,0 +1,363 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Thank You | Dr Naturals{% endblock %}
+
+{% block content %}
+<style>
+    :root {
+        --ty-navy: #1e3a4d;
+        --ty-green: #4c7840;
+        --ty-green-dark: #365b2d;
+        --ty-gold: #b08d57;
+        --ty-muted: #6e7f89;
+        --ty-shadow: 0 26px 70px -30px rgba(18, 38, 49, 0.30);
+        --ty-radius: 28px;
+    }
+
+    .ty-shell {
+        min-height: calc(100vh - 140px);
+        padding: 110px 0 60px;
+        background:
+            radial-gradient(circle at 15% 10%, rgba(176, 141, 87, 0.14), transparent 35%),
+            radial-gradient(circle at 85% 25%, rgba(76, 120, 64, 0.10), transparent 32%),
+            linear-gradient(180deg, #fcfaf6 0%, #f8f2e9 100%);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .ty-bubbles {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0.65;
+    }
+
+    .ty-bubble {
+        position: absolute;
+        width: 220px;
+        height: 220px;
+        border-radius: 50%;
+        background: rgba(76, 120, 64, 0.08);
+        animation: floatUp 9s ease-in-out infinite;
+        filter: blur(10px);
+    }
+
+    .ty-bubble.b1 { left: -70px; top: 80px; background: rgba(176, 141, 87, 0.10); animation-duration: 10s; }
+    .ty-bubble.b2 { right: -90px; top: 140px; width: 260px; height: 260px; animation-duration: 12s; }
+    .ty-bubble.b3 { left: 15%; bottom: -130px; width: 300px; height: 300px; animation-duration: 14s; background: rgba(30, 58, 77, 0.06); }
+
+    @keyframes floatUp {
+        0%, 100% { transform: translateY(0) translateX(0) scale(1); }
+        50% { transform: translateY(-18px) translateX(10px) scale(1.02); }
+    }
+
+    .ty-container {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .ty-card {
+        background: rgba(255, 255, 255, 0.92);
+        border: 1px solid rgba(76, 120, 64, 0.14);
+        border-radius: calc(var(--ty-radius) + 6px);
+        box-shadow: var(--ty-shadow);
+        overflow: hidden;
+        backdrop-filter: blur(10px);
+    }
+
+    .ty-header {
+        padding: 28px 28px 22px;
+        background: linear-gradient(135deg, rgba(76, 120, 64, 0.16), rgba(176, 141, 87, 0.12));
+        border-bottom: 1px solid rgba(76, 120, 64, 0.12);
+        display: flex;
+        align-items: center;
+        gap: 18px;
+    }
+
+    .ty-check {
+        width: 56px;
+        height: 56px;
+        border-radius: 16px;
+        background: rgba(76, 120, 64, 0.14);
+        display: grid;
+        place-items: center;
+        flex: 0 0 auto;
+    }
+
+    .ty-check svg { width: 34px; height: 34px; }
+
+    .ty-check path {
+        stroke: var(--ty-green);
+        stroke-width: 4.2;
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-dasharray: 60;
+        stroke-dashoffset: 60;
+        animation: draw 0.9s ease forwards;
+    }
+
+    @keyframes draw { to { stroke-dashoffset: 0; } }
+
+    .ty-title h1 {
+        margin: 0;
+        color: var(--ty-navy);
+        font-family: 'Playfair Display', serif;
+        font-size: clamp(1.6rem, 3.1vw, 2.3rem);
+        letter-spacing: -0.02em;
+    }
+
+    .ty-title p {
+        margin: 6px 0 0;
+        color: var(--ty-muted);
+        font-size: 0.98rem;
+        line-height: 1.6;
+    }
+
+    .ty-body {
+        padding: 26px 28px 30px;
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 18px;
+    }
+
+    @media (max-width: 900px) { .ty-body { grid-template-columns: 1fr; } }
+
+    .ty-panel {
+        border: 1px solid rgba(30, 58, 77, 0.10);
+        border-radius: var(--ty-radius);
+        background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,255,255,0.92));
+        padding: 18px 18px 16px;
+    }
+
+    .ty-kv {
+        display: grid;
+        grid-template-columns: 160px 1fr;
+        gap: 10px 14px;
+        font-size: 0.95rem;
+    }
+
+    @media (max-width: 520px) { .ty-kv { grid-template-columns: 1fr; } }
+
+    .ty-kv .k { color: var(--ty-muted); font-weight: 800; letter-spacing: 0.01em; }
+    .ty-kv .v { color: var(--ty-navy); font-weight: 800; }
+
+    .ty-items { margin-top: 14px; border-top: 1px dashed rgba(30, 58, 77, 0.14); padding-top: 14px; }
+
+    .ty-item {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(30, 58, 77, 0.08);
+        font-size: 0.95rem;
+    }
+
+    .ty-item:last-child { border-bottom: 0; }
+    .ty-item strong { color: var(--ty-navy); }
+    .ty-item span { color: var(--ty-muted); font-weight: 800; }
+
+    .ty-total {
+        margin-top: 14px;
+        padding: 14px;
+        border-radius: 18px;
+        background: rgba(76, 120, 64, 0.08);
+        border: 1px solid rgba(76, 120, 64, 0.14);
+    }
+
+    .ty-total-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 6px 0;
+        color: var(--ty-navy);
+        font-weight: 800;
+    }
+
+    .ty-total-row.small { color: var(--ty-muted); }
+
+    .ty-total-row.big {
+        padding-top: 10px;
+        border-top: 1px solid rgba(76, 120, 64, 0.18);
+        font-size: 1.15rem;
+        color: var(--ty-green-dark);
+    }
+
+    .ty-actions { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 10px; }
+
+    .ty-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 16px;
+        border-radius: 999px;
+        text-decoration: none;
+        font-weight: 900;
+        border: 1px solid rgba(30, 58, 77, 0.12);
+        background: rgba(255,255,255,0.9);
+        color: var(--ty-navy);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .ty-btn.primary {
+        background: linear-gradient(135deg, var(--ty-green), var(--ty-green-dark));
+        border-color: rgba(54, 91, 45, 0.35);
+        color: #fff;
+    }
+
+    .ty-btn:hover { transform: translateY(-1px); box-shadow: 0 16px 32px -24px rgba(18, 38, 49, 0.45); }
+
+    .confetti {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        overflow: hidden;
+        z-index: 9999;
+    }
+
+    .confetti i {
+        position: absolute;
+        width: 10px;
+        height: 16px;
+        opacity: 0.95;
+        border-radius: 3px;
+        transform: translateY(-15vh) rotate(0deg);
+        animation: fall linear forwards;
+    }
+
+    @keyframes fall { to { transform: translateY(110vh) rotate(720deg); } }
+</style>
+
+<div class="confetti" id="confetti"></div>
+
+<section class="ty-shell">
+    <div class="ty-bubbles" aria-hidden="true">
+        <div class="ty-bubble b1"></div>
+        <div class="ty-bubble b2"></div>
+        <div class="ty-bubble b3"></div>
+    </div>
+
+    <div class="ty-container">
+        <div class="ty-card">
+            <div class="ty-header">
+                <div class="ty-check" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" role="img" aria-label="Success">
+                        <path d="M20 6L9 17l-5-5"></path>
+                    </svg>
+                </div>
+                <div class="ty-title">
+                    <h1>Order Confirmed</h1>
+                    <p>Thanks, {{ order.name }}. Your payment is successful and we’re preparing your order.</p>
+                </div>
+            </div>
+
+            <div class="ty-body">
+                <div class="ty-panel">
+                    <div class="ty-kv">
+                        <div class="k">Order ID</div>
+                        <div class="v">#{{ order.id }}</div>
+
+                        <div class="k">Payment</div>
+                        <div class="v">{{ order.payment_status|title }}</div>
+
+                        <div class="k">Phone</div>
+                        <div class="v">{{ order.phone }}</div>
+
+                        <div class="k">Deliver To</div>
+                        <div class="v">
+                            {{ order.address }}{% if order.landmark %}, {{ order.landmark }}{% endif %}, {{ order.city }}, {{ order.state }} - {{ order.pincode }}
+                        </div>
+                    </div>
+
+                    <div class="ty-items">
+                        <strong style="color: #1e3a4d;">Items</strong>
+                        {% for item in order.items.all %}
+                            <div class="ty-item">
+                                <div>
+                                    <strong>{{ item.product.name }}</strong><br>
+                                    <span>Qty: {{ item.quantity }}</span>
+                                </div>
+                                <div><strong>₹{{ item.get_total|floatformat:2 }}</strong></div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="ty-panel">
+                    <div class="ty-total">
+                        <div class="ty-total-row small">
+                            <div>Subtotal</div>
+                            <div>₹{{ order.total_amount|floatformat:2 }}</div>
+                        </div>
+                        <div class="ty-total-row small">
+                            <div>Delivery</div>
+                            <div>
+                                {% if order.delivery_charge == 0 %}
+                                    FREE
+                                {% else %}
+                                    ₹{{ order.delivery_charge|floatformat:2 }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="ty-total-row big">
+                            <div>Grand Total</div>
+                            <div>₹{{ order.get_grand_total|floatformat:2 }}</div>
+                        </div>
+                    </div>
+
+                    <div class="ty-actions">
+                        <a class="ty-btn primary" href="{% url 'index' %}">
+                            <i class="fas fa-leaf" aria-hidden="true"></i>
+                            Continue Shopping
+                        </a>
+                        <a class="ty-btn" href="{% url 'cart' %}">
+                            <i class="fas fa-shopping-bag" aria-hidden="true"></i>
+                            Back to Cart
+                        </a>
+                    </div>
+
+                    <p style="margin: 14px 0 0; color: #6e7f89; font-weight: 800; font-size: 0.92rem; line-height: 1.6;">
+                        A confirmation email is sent to <span style="color:#1e3a4d;">{{ order.email }}</span>.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    (function () {
+        var holder = document.getElementById('confetti');
+        if (!holder) return;
+
+        var colors = ['#4c7840', '#b08d57', '#1e3a4d', '#f59e0b', '#22c55e', '#60a5fa'];
+        var pieces = 60;
+
+        for (var i = 0; i < pieces; i++) {
+            var p = document.createElement('i');
+            var left = Math.random() * 100;
+            var delay = Math.random() * 0.6;
+            var duration = 2.8 + Math.random() * 1.8;
+            var w = 8 + Math.random() * 8;
+            var h = 10 + Math.random() * 12;
+
+            p.style.left = left + 'vw';
+            p.style.top = (-10 - Math.random() * 30) + 'vh';
+            p.style.width = w + 'px';
+            p.style.height = h + 'px';
+            p.style.background = colors[Math.floor(Math.random() * colors.length)];
+            p.style.animationDuration = duration + 's';
+            p.style.animationDelay = delay + 's';
+            holder.appendChild(p);
+        }
+
+        setTimeout(function () {
+            holder.innerHTML = '';
+        }, 6000);
+    })();
+</script>
+{% endblock %}

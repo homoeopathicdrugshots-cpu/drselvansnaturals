@@ -1,0 +1,209 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Login | Dr Naturals{% endblock %}
+
+{% block content %}
+<style>
+    .auth-shell {
+        min-height: calc(100vh - 140px);
+        padding: 120px 1.25rem 3rem;
+        display: grid;
+        place-items: center;
+        background:
+            radial-gradient(circle at top left, rgba(138, 168, 98, 0.25), transparent 35%),
+            radial-gradient(circle at bottom right, rgba(76, 120, 64, 0.18), transparent 30%),
+            linear-gradient(180deg, #f8f3ea 0%, #f3ecdf 100%);
+    }
+
+    .auth-card {
+        width: 100%;
+        max-width: 460px;
+        background: rgba(255,255,255,0.86);
+        border: 1px solid rgba(76, 120, 64, 0.14);
+        backdrop-filter: blur(14px);
+        border-radius: 32px;
+        overflow: hidden;
+        box-shadow: 0 30px 60px -24px rgba(43, 62, 32, 0.28);
+        animation: riseIn 0.75s ease;
+    }
+
+    .auth-top {
+        padding: 2rem 2rem 1rem;
+        background: linear-gradient(135deg, #fffdf8, #eef4e8);
+        text-align: center;
+    }
+
+    .auth-badge {
+        width: 74px;
+        height: 74px;
+        margin: 0 auto 1rem;
+        border-radius: 22px;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(135deg, #4C7840, #88a85a);
+        color: white;
+        font-size: 1.7rem;
+        box-shadow: 0 18px 30px -14px rgba(76, 120, 64, 0.55);
+    }
+
+    .auth-top h1 {
+        font-size: 2rem;
+        margin-bottom: 0.35rem;
+        color: #1f2d1c;
+    }
+
+    .auth-top p {
+        color: #5f6d57;
+        font-size: 0.95rem;
+    }
+
+    .auth-body {
+        padding: 1.6rem 2rem 2rem;
+    }
+
+    .auth-alert {
+        background: #fff4f2;
+        border: 1px solid #ffd3cd;
+        color: #b9382d;
+        padding: 0.9rem 1rem;
+        border-radius: 16px;
+        margin-bottom: 1rem;
+        font-size: 0.92rem;
+    }
+
+    .auth-field {
+        margin-bottom: 1rem;
+    }
+
+    .auth-field label {
+        display: block;
+        margin-bottom: 0.45rem;
+        font-weight: 600;
+        color: #263222;
+        font-size: 0.92rem;
+    }
+
+    .auth-field input {
+        width: 100%;
+        padding: 0.95rem 1rem;
+        border: 1px solid #d8decb;
+        border-radius: 16px;
+        background: #fff;
+        outline: none;
+        transition: 0.25s ease;
+        font-size: 0.95rem;
+    }
+
+    .auth-field input:focus {
+        border-color: #4C7840;
+        box-shadow: 0 0 0 4px rgba(76, 120, 64, 0.12);
+        transform: translateY(-1px);
+    }
+
+    .auth-row {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        margin: 1rem 0 1.25rem;
+        color: #5f6d57;
+        font-size: 0.92rem;
+    }
+
+    .auth-row input[type="checkbox"] {
+        width: 17px;
+        height: 17px;
+        accent-color: #4C7840;
+    }
+
+    .auth-btn {
+        width: 100%;
+        border: none;
+        border-radius: 999px;
+        padding: 1rem 1.1rem;
+        font-weight: 700;
+        font-size: 0.98rem;
+        color: white;
+        cursor: pointer;
+        background: linear-gradient(135deg, #4C7840, #6f9858);
+        box-shadow: 0 18px 28px -14px rgba(76, 120, 64, 0.45);
+        transition: 0.28s ease;
+    }
+
+    .auth-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 22px 32px -14px rgba(76, 120, 64, 0.5);
+    }
+
+    .auth-footer {
+        margin-top: 1.5rem;
+        text-align: center;
+        color: #5f6d57;
+        font-size: 0.93rem;
+    }
+
+    .auth-footer a {
+        color: #4C7840;
+        text-decoration: none;
+        font-weight: 700;
+    }
+
+    @keyframes riseIn {
+        from {
+            opacity: 0;
+            transform: translateY(26px) scale(0.98);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+</style>
+
+<div class="auth-shell">
+    <div class="auth-card">
+        <div class="auth-top">
+            <div class="auth-badge">
+                <i class="fas fa-leaf"></i>
+            </div>
+            <h1>Welcome Back</h1>
+            <p>Sign in to continue your wellness journey</p>
+        </div>
+
+        <div class="auth-body">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="auth-alert">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post" action="{% url 'login' %}">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.GET.next }}">
+
+                <div class="auth-field">
+                    <label>Email</label>
+                    <input type="text" name="username" placeholder="Enter your email" required>
+                </div>
+
+                <div class="auth-field">
+                    <label>Password</label>
+                    <input type="password" name="password" placeholder="Enter your password" required>
+                </div>
+
+                <div class="auth-row">
+                    <input type="checkbox" name="remember_me" id="remember_me">
+                    <label for="remember_me" style="margin:0;">Remember me</label>
+                </div>
+
+                <button type="submit" class="auth-btn">Sign In</button>
+            </form>
+
+            <div class="auth-footer">
+                Don't have an account?
+                <a href="{% url 'register' %}">Create Account</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

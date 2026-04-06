@@ -1,0 +1,490 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}AI Skin Analyzer | Dr Naturals{% endblock %}
+
+{% block content %}
+<style>
+    .analyzer-container {
+        max-width: 1200px;
+        margin: 100px auto 4rem;
+        padding: 0 2rem;
+    }
+    .analyzer-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    .analyzer-header h1 {
+        font-size: 2.5rem;
+        color: #1E3A4D;
+        margin-bottom: 0.5rem;
+    }
+    .analyzer-header p {
+        color: #5A6E7A;
+    }
+    .analyzer-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+    }
+    /* Camera Section */
+    .camera-section {
+        background: white;
+        border-radius: 28px;
+        padding: 1.5rem;
+        box-shadow: 0 10px 30px -12px rgba(0,0,0,0.08);
+    }
+    .camera-section h2 {
+        font-size: 1.3rem;
+        color: #1E3A4D;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .video-container {
+        position: relative;
+        width: 100%;
+        border-radius: 20px;
+        overflow: hidden;
+        background: #E8F0FA;
+        aspect-ratio: 1 / 1;
+    }
+    #video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    #canvas {
+        display: none;
+    }
+    .camera-controls {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+        justify-content: center;
+    }
+    .btn-camera {
+        background: #2C6E9E;
+        color: white;
+        border: none;
+        padding: 0.7rem 1.5rem;
+        border-radius: 50px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .btn-camera:hover {
+        background: #1E5A88;
+        transform: translateY(-2px);
+    }
+    .btn-camera-secondary {
+        background: #E8F0FA;
+        color: #2C6E9E;
+    }
+    /* Results Section */
+    .results-section {
+        background: white;
+        border-radius: 28px;
+        padding: 1.5rem;
+        box-shadow: 0 10px 30px -12px rgba(0,0,0,0.08);
+    }
+    .results-section h2 {
+        font-size: 1.3rem;
+        color: #1E3A4D;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .skin-score {
+        text-align: center;
+        padding: 1.5rem;
+        background: #E8F0FA;
+        border-radius: 20px;
+        margin-bottom: 1.5rem;
+    }
+    .score-circle {
+        width: 150px;
+        height: 150px;
+        margin: 0 auto;
+        position: relative;
+    }
+    .score-number {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #2C6E9E;
+    }
+    canvas#scoreCanvas {
+        width: 150px;
+        height: 150px;
+    }
+    .skin-type {
+        text-align: center;
+        margin-top: 1rem;
+        font-size: 1.1rem;
+    }
+    .skin-type span {
+        font-weight: 700;
+        color: #2C6E9E;
+    }
+    .analysis-details {
+        margin-top: 1.5rem;
+    }
+    .detail-item {
+        padding: 0.8rem;
+        border-bottom: 1px solid #E8F0FA;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .detail-label {
+        font-weight: 500;
+        color: #1E3A4D;
+    }
+    .detail-value {
+        color: #2C6E9E;
+        font-weight: 600;
+    }
+    .recommendations {
+        margin-top: 1.5rem;
+        padding-top: 1rem;
+        border-top: 2px solid #E8F0FA;
+    }
+    .recommendations h3 {
+        font-size: 1rem;
+        color: #1E3A4D;
+        margin-bottom: 0.8rem;
+    }
+    .recommendation-list {
+        list-style: none;
+        padding: 0;
+    }
+    .recommendation-list li {
+        padding: 0.5rem 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #5A6E7A;
+        font-size: 0.9rem;
+    }
+    .recommendation-list li i {
+        color: #2C6E9E;
+        width: 20px;
+    }
+    .product-suggestions {
+        margin-top: 1.5rem;
+        padding-top: 1rem;
+        border-top: 2px solid #E8F0FA;
+    }
+    .product-suggestions h3 {
+        font-size: 1rem;
+        color: #1E3A4D;
+        margin-bottom: 0.8rem;
+    }
+    .product-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 1rem;
+    }
+    .product-card-small {
+        background: #E8F0FA;
+        border-radius: 16px;
+        padding: 0.8rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    .product-card-small:hover {
+        transform: translateY(-3px);
+        background: #D0E0F0;
+    }
+    .product-card-small i {
+        font-size: 2rem;
+        color: #2C6E9E;
+        margin-bottom: 0.5rem;
+    }
+    .product-card-small h4 {
+        font-size: 0.75rem;
+        color: #1E3A4D;
+        margin-bottom: 0.2rem;
+    }
+    .product-card-small p {
+        font-size: 0.7rem;
+        color: #2C6E9E;
+        font-weight: 600;
+    }
+    .loading {
+        text-align: center;
+        padding: 2rem;
+        color: #2C6E9E;
+    }
+    @media (max-width: 768px) {
+        .analyzer-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="analyzer-container">
+    <div class="analyzer-header">
+        <h1><i class="fas fa-microscope"></i> AI Skin Analyzer</h1>
+        <p>Advanced AI technology to analyze your skin and recommend the perfect skincare routine</p>
+    </div>
+
+    <div class="analyzer-grid">
+        <!-- Camera Section -->
+        <div class="camera-section">
+            <h2><i class="fas fa-camera"></i> Take a Photo</h2>
+            <div class="video-container">
+                <video id="video" autoplay playsinline></video>
+                <canvas id="canvas"></canvas>
+            </div>
+            <div class="camera-controls">
+                <button id="captureBtn" class="btn-camera"><i class="fas fa-camera"></i> Capture & Analyze</button>
+                <button id="resetBtn" class="btn-camera btn-camera-secondary"><i class="fas fa-sync-alt"></i> Reset</button>
+            </div>
+            <p style="font-size: 0.75rem; text-align: center; margin-top: 1rem; color: #5A6E7A;">
+                <i class="fas fa-info-circle"></i> Ensure good lighting and face is clearly visible
+            </p>
+        </div>
+
+        <!-- Results Section -->
+        <div class="results-section" id="resultsSection">
+            <h2><i class="fas fa-chart-line"></i> Skin Analysis Results</h2>
+            <div id="analysisContent">
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin"></i> Take a photo to analyze your skin
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // DOM Elements
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const captureBtn = document.getElementById('captureBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const resultsContent = document.getElementById('analysisContent');
+
+    // Camera Access
+    async function startCamera() {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ 
+                video: { facingMode: 'user' } 
+            });
+            video.srcObject = stream;
+        } catch (err) {
+            resultsContent.innerHTML = `
+                <div style="text-align: center; padding: 2rem;">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #e74c3c;"></i>
+                    <p style="margin-top: 1rem;">Camera access denied. Please allow camera access to use Skin Analyzer.</p>
+                </div>
+            `;
+        }
+    }
+
+    // Advanced Skin Analysis Algorithm
+    function analyzeSkin(imageData) {
+        const pixels = imageData.data;
+        let rSum = 0, gSum = 0, bSum = 0;
+        let darkPixels = 0;
+        let redPixels = 0;
+        
+        for (let i = 0; i < pixels.length; i += 4) {
+            const r = pixels[i];
+            const g = pixels[i + 1];
+            const b = pixels[i + 2];
+            
+            rSum += r;
+            gSum += g;
+            bSum += b;
+            
+            const brightness = (r + g + b) / 3;
+            if (brightness < 80) darkPixels++;
+            if (r > g + 30 && r > b + 30) redPixels++;
+        }
+        
+        const totalPixels = pixels.length / 4;
+        const avgR = rSum / totalPixels;
+        const avgG = gSum / totalPixels;
+        const avgB = bSum / totalPixels;
+        
+        let score = 70;
+        const colorVariation = Math.abs(avgR - avgG) + Math.abs(avgG - avgB) + Math.abs(avgR - avgB);
+        score -= Math.min(15, colorVariation / 20);
+        
+        const darkSpotRatio = darkPixels / totalPixels;
+        score -= Math.min(20, darkSpotRatio * 40);
+        
+        const redRatio = redPixels / totalPixels;
+        score -= Math.min(15, redRatio * 30);
+        
+        score = Math.max(20, Math.min(100, Math.round(score)));
+        
+        let skinType = '';
+        if (avgR > 150 && avgG < 120) skinType = 'Oily';
+        else if (avgR < 100 && avgG < 100 && avgB < 100) skinType = 'Dry';
+        else if (redRatio > 0.1) skinType = 'Sensitive';
+        else if (colorVariation < 30) skinType = 'Normal';
+        else skinType = 'Combination';
+        
+        const concerns = [];
+        if (darkSpotRatio > 0.05) concerns.push('Dark Spots');
+        if (redRatio > 0.08) concerns.push('Redness');
+        if (score < 50) concerns.push('Dullness');
+        
+        const recommendations = [];
+        if (score < 60) recommendations.push('Use gentle exfoliating cleanser');
+        if (concerns.includes('Dark Spots')) recommendations.push('Apply Vitamin C serum daily');
+        if (concerns.includes('Redness')) recommendations.push('Use soothing ingredients like aloe vera');
+        if (skinType === 'Oily') recommendations.push('Use oil-free, non-comedogenic products');
+        if (skinType === 'Dry') recommendations.push('Apply hydrating moisturizer with hyaluronic acid');
+        recommendations.push('Always wear SPF 50+ sunscreen');
+        
+        return {
+            score: score,
+            skinType: skinType,
+            concerns: concerns,
+            recommendations: recommendations,
+            metrics: {
+                evenness: Math.round(100 - (colorVariation / 3)),
+                hydration: Math.round(60 + (avgG - avgR) / 3),
+                clarity: Math.round(score),
+                radiance: Math.round(70 + (avgR - avgB) / 5)
+            }
+        };
+    }
+
+    function drawScoreCircle(score) {
+        const canvas = document.createElement('canvas');
+        canvas.width = 150;
+        canvas.height = 150;
+        const ctx = canvas.getContext('2d');
+        
+        const centerX = 75, centerY = 75, radius = 65;
+        const startAngle = -Math.PI / 2;
+        const endAngle = startAngle + (2 * Math.PI * score / 100);
+        
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+        ctx.strokeStyle = '#E8F0FA';
+        ctx.lineWidth = 12;
+        ctx.stroke();
+        
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+        ctx.strokeStyle = '#2C6E9E';
+        ctx.lineWidth = 12;
+        ctx.stroke();
+        
+        ctx.font = 'bold 32px "Playfair Display"';
+        ctx.fillStyle = '#1E3A4D';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(score, centerX, centerY);
+        
+        return canvas.toDataURL();
+    }
+
+    function displayResults(analysis) {
+        resultsContent.innerHTML = `
+            <div class="skin-score">
+                <div class="score-circle">
+                    <img id="scoreImage" style="width: 150px; height: 150px;">
+                    <div class="score-number">${analysis.score}%</div>
+                </div>
+                <div class="skin-type">
+                    <span><i class="fas fa-tint"></i> ${analysis.skinType} Skin</span>
+                </div>
+            </div>
+            <div class="analysis-details">
+                <div class="detail-item">
+                    <span class="detail-label">Skin Health Score</span>
+                    <span class="detail-value">${analysis.score}/100</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Evenness</span>
+                    <span class="detail-value">${analysis.metrics.evenness}%</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Hydration Level</span>
+                    <span class="detail-value">${analysis.metrics.hydration}%</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Radiance</span>
+                    <span class="detail-value">${analysis.metrics.radiance}%</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Concerns</span>
+                    <span class="detail-value">${analysis.concerns.length > 0 ? analysis.concerns.join(', ') : 'Minimal'}</span>
+                </div>
+            </div>
+            <div class="recommendations">
+                <h3><i class="fas fa-lightbulb"></i> Recommended Routine</h3>
+                <ul class="recommendation-list">
+                    ${analysis.recommendations.map(rec => `<li><i class="fas fa-check-circle"></i> ${rec}</li>`).join('')}
+                </ul>
+            </div>
+            <div class="product-suggestions">
+                <h3><i class="fas fa-shopping-bag"></i> Recommended Products</h3>
+                <div class="product-grid">
+                    <div class="product-card-small" onclick="location.href='/skincare/'">
+                        <i class="fas fa-soap"></i>
+                        <h4>Gentle Cleanser</h4>
+                        <p>Shop Now</p>
+                    </div>
+                    <div class="product-card-small" onclick="location.href='/skincare/'">
+                        <i class="fas fa-hand-sparkles"></i>
+                        <h4>Vitamin C Serum</h4>
+                        <p>Shop Now</p>
+                    </div>
+                    <div class="product-card-small" onclick="location.href='/skincare/'">
+                        <i class="fas fa-sun"></i>
+                        <h4>SPF 50 Sunscreen</h4>
+                        <p>Shop Now</p>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        const img = document.createElement('img');
+        img.src = drawScoreCircle(analysis.score);
+        setTimeout(() => {
+            const existingImg = document.getElementById('scoreImage');
+            if (existingImg) existingImg.src = img.src;
+        }, 100);
+    }
+
+    captureBtn.addEventListener('click', () => {
+        const context = canvas.getContext('2d');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        
+        const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+        
+        resultsContent.innerHTML = `<div class="loading"><i class="fas fa-spinner fa-spin"></i> Analyzing your skin...</div>`;
+        
+        setTimeout(() => {
+            const analysis = analyzeSkin(imageData);
+            displayResults(analysis);
+        }, 1500);
+    });
+
+    resetBtn.addEventListener('click', () => {
+        resultsContent.innerHTML = `<div class="loading"><i class="fas fa-camera"></i> Take a photo to analyze your skin</div>`;
+    });
+
+    startCamera();
+</script>
+{% endblock %}

@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Register | Dr Naturals{% endblock %}
+
+{% block content %}
+<div style="max-width: 500px; margin: 120px auto 4rem; padding: 2rem; background: white; border-radius: 40px; box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.1);">
+    <div style="text-align: center; margin-bottom: 2rem;">
+        <h1 style="font-size: 2rem; color: #1E3A4D;">Create Account</h1>
+        <p style="color: #5A6E7A;">Join the Dr Naturals community</p>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div style="background: {% if message.tags == 'success' %}#2C6E9E{% else %}#E8F0FA{% endif %}; color: {% if message.tags == 'success' %}white{% else %}#1E3A4D{% endif %}; padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem; text-align: center;">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="post" action="{% url 'register' %}">
+        {% csrf_token %}
+        
+        <div style="margin-bottom: 1rem;">
+            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Username *</label>
+            <input type="text" name="username" required style="width: 100%; padding: 0.8rem; border: 1px solid #D0E0F0; border-radius: 12px;">
+            <small style="color: #5A6E7A;">Required. 150 characters or fewer.</small>
+        </div>
+
+        <div style="margin-bottom: 1rem;">
+            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">First Name *</label>
+            <input type="text" name="first_name" required style="width: 100%; padding: 0.8rem; border: 1px solid #D0E0F0; border-radius: 12px;">
+        </div>
+
+        <div style="margin-bottom: 1rem;">
+            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Last Name</label>
+            <input type="text" name="last_name" style="width: 100%; padding: 0.8rem; border: 1px solid #D0E0F0; border-radius: 12px;">
+        </div>
+
+        <div style="margin-bottom: 1rem;">
+            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Email Address *</label>
+            <input type="email" name="email" required style="width: 100%; padding: 0.8rem; border: 1px solid #D0E0F0; border-radius: 12px;">
+        </div>
+
+        <div style="margin-bottom: 1rem;">
+            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Phone Number *</label>
+            <input type="tel" name="phone" required style="width: 100%; padding: 0.8rem; border: 1px solid #D0E0F0; border-radius: 12px;" placeholder="10-digit mobile number">
+        </div>
+
+        <div style="margin-bottom: 1rem;">
+            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Password *</label>
+            <input type="password" name="password1" required style="width: 100%; padding: 0.8rem; border: 1px solid #D0E0F0; border-radius: 12px;">
+            <small style="color: #5A6E7A;">Your password must contain at least 8 characters.</small>
+        </div>
+
+        <div style="margin-bottom: 1rem;">
+            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Confirm Password *</label>
+            <input type="password" name="password2" required style="width: 100%; padding: 0.8rem; border: 1px solid #D0E0F0; border-radius: 12px;">
+        </div>
+
+        <button type="submit" style="width: 100%; background: #2C6E9E; color: white; border: none; padding: 1rem; border-radius: 50px; font-weight: 600; font-size: 1rem; cursor: pointer; transition: all 0.3s;">
+            Create Account →
+        </button>
+    </form>
+
+    <div style="text-align: center; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #E8F0FA;">
+        <p>Already have an account? <a href="{% url 'login' %}" style="color: #2C6E9E; text-decoration: none;">Sign In</a></p>
+    </div>
+</div>
+{% endblock %}

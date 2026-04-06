@@ -1,0 +1,409 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Shopping Cart | Dr Naturals{% endblock %}
+
+{% block content %}
+<style>
+    .cart-container {
+        max-width: 1200px;
+        margin: 100px auto 4rem;
+        padding: 0 2rem;
+    }
+    .cart-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    .cart-header h1 {
+        font-size: 2.5rem;
+        color: #000000;
+        font-family: 'Playfair Display', serif;
+        margin-bottom: 0.5rem;
+    }
+    .cart-header p {
+        color: #4A4A4A;
+    }
+    .empty-cart {
+        text-align: center;
+        padding: 4rem;
+        background: white;
+        border-radius: 40px;
+        box-shadow: 0 10px 30px -12px rgba(0,0,0,0.08);
+    }
+    .empty-cart i {
+        font-size: 4rem;
+        color: #4C7840;
+        margin-bottom: 1rem;
+    }
+    .cart-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 2rem;
+    }
+    .cart-items {
+        background: white;
+        border-radius: 28px;
+        padding: 1.5rem;
+        box-shadow: 0 10px 30px -12px rgba(0,0,0,0.08);
+        border: 1px solid rgba(76, 120, 64, 0.1);
+    }
+    .cart-item {
+        display: flex;
+        gap: 1.5rem;
+        padding: 1rem 0;
+        border-bottom: 1px solid #E8F0E4;
+    }
+    .cart-item:last-child {
+        border-bottom: none;
+    }
+    .cart-item-img {
+        width: 100px;
+        height: 100px;
+        background-size: cover;
+        background-position: center;
+        border-radius: 16px;
+        background-color: #E8F0E4;
+    }
+    .cart-item-details {
+        flex: 1;
+    }
+    .cart-item-details h3 {
+        font-size: 1.1rem;
+        color: #000000;
+        margin-bottom: 0.5rem;
+    }
+    .cart-item-price {
+        color: #4C7840;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+    .cart-item-quantity {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        margin-top: 0.8rem;
+        flex-wrap: wrap;
+    }
+    .qty-btn {
+        width: 32px;
+        height: 32px;
+        border: 1px solid #4C7840;
+        background: white;
+        border-radius: 50%;
+        cursor: pointer;
+        color: #4C7840;
+        font-weight: bold;
+        transition: all 0.3s;
+    }
+    .qty-btn:hover {
+        background: #4C7840;
+        color: white;
+    }
+    .qty-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    .cart-item-total {
+        font-weight: 700;
+        color: #4C7840;
+        font-size: 1.2rem;
+        min-width: 100px;
+        text-align: right;
+    }
+    .remove-item {
+        background: none;
+        border: none;
+        color: #e74c3c;
+        cursor: pointer;
+        margin-left: 1rem;
+        transition: all 0.3s;
+        font-size: 0.85rem;
+    }
+    .remove-item:hover {
+        color: #c0392b;
+    }
+    .cart-summary {
+        background: white;
+        border-radius: 28px;
+        padding: 1.5rem;
+        height: fit-content;
+        box-shadow: 0 10px 30px -12px rgba(0,0,0,0.08);
+        border: 1px solid rgba(76, 120, 64, 0.1);
+        position: sticky;
+        top: 100px;
+    }
+    .cart-summary h3 {
+        font-size: 1.3rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #E8F0E4;
+        color: #000000;
+    }
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.8rem 0;
+        color: #4A4A4A;
+        font-size: 1rem;
+    }
+    .shipping-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.8rem 0;
+        border-bottom: 1px solid #E8F0E4;
+        font-size: 1rem;
+    }
+    .total-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 1rem 0;
+        border-top: 2px solid #E8F0E4;
+        margin-top: 0.5rem;
+        font-weight: 700;
+        font-size: 1.2rem;
+    }
+    .total-row span:last-child {
+        color: #4C7840;
+        font-size: 1.5rem;
+        font-weight: 800;
+    }
+    .btn-checkout {
+        display: block;
+        background: linear-gradient(135deg, #4C7840, #3A5E30);
+        color: white;
+        text-align: center;
+        padding: 0.8rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        margin-top: 1rem;
+        transition: all 0.3s;
+    }
+    .btn-checkout:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px -8px rgba(76, 120, 64, 0.4);
+    }
+    .btn-continue {
+        display: block;
+        background: transparent;
+        border: 1px solid #4C7840;
+        color: #4C7840;
+        text-align: center;
+        padding: 0.8rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        margin-top: 1rem;
+        transition: all 0.3s;
+    }
+    .btn-continue:hover {
+        background: #E8F0E4;
+    }
+    .shipping-progress {
+        background: #F5F0E8;
+        border-radius: 16px;
+        padding: 1rem;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+    }
+    .shipping-progress-text {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+        font-size: 0.75rem;
+    }
+    .progress-bar-container {
+        background: #E8F0E4;
+        border-radius: 10px;
+        height: 6px;
+        overflow: hidden;
+    }
+    .progress-bar-fill {
+        background: linear-gradient(90deg, #4C7840, #6A9C5A);
+        height: 100%;
+        border-radius: 10px;
+        transition: width 0.3s ease;
+        width: 0%;
+    }
+    .free-shipping-badge {
+        background: #E8F5E9;
+        padding: 0.5rem;
+        border-radius: 12px;
+        text-align: center;
+        margin-top: 0.5rem;
+    }
+    @media (max-width: 768px) {
+        .cart-grid {
+            grid-template-columns: 1fr;
+        }
+        .cart-item {
+            flex-wrap: wrap;
+        }
+        .cart-item-total {
+            text-align: left;
+            margin-left: 115px;
+        }
+    }
+</style>
+
+<div class="cart-container">
+    <div class="cart-header">
+        <h1>Your Cart</h1>
+        <p><i class="fas fa-save"></i> Items stay saved even after you logout</p>
+    </div>
+
+    {% if cart|length == 0 %}
+    <div class="empty-cart">
+        <i class="fas fa-shopping-bag"></i>
+        <h2>Your cart is empty</h2>
+        <p>Add some products. They will be saved for your next visit!</p>
+        <a href="{% url 'index' %}" class="btn-checkout" style="display: inline-block; padding: 0.8rem 2rem; width: auto;">Continue Shopping →</a>
+    </div>
+    {% else %}
+    <div class="cart-grid">
+        <div class="cart-items">
+            {% for item in cart %}
+            <div class="cart-item" data-price="{{ item.price }}" data-quantity="{{ item.quantity }}">
+                <div class="cart-item-img" style="background-image: url('{% if item.product.image %}{{ item.product.image.url }}{% else %}https://placehold.co/100x100/E8F0E4/4C7840?text={{ item.product.name|slice:":10" }}{% endif %}');"></div>
+                <div class="cart-item-details">
+                    <h3>{{ item.product.name }}</h3>
+                    <p class="cart-item-price">₹{{ item.price }} each</p>
+                    <div class="cart-item-quantity">
+                        <form method="post" action="{% url 'update_cart_quantity' item.product.id %}" class="update-form" style="display: inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="quantity" value="{{ item.quantity|add:'-1' }}">
+                            <button type="submit" class="qty-btn" {% if item.quantity <= 2 %}disabled{% endif %}>-</button>
+                        </form>
+                        <span class="item-qty" style="min-width: 30px; text-align: center; font-weight: 600;">{{ item.quantity }}</span>
+                        <form method="post" action="{% url 'update_cart_quantity' item.product.id %}" class="update-form" style="display: inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="quantity" value="{{ item.quantity|add:'1' }}">
+                            <button type="submit" class="qty-btn">+</button>
+                        </form>
+                        <form method="post" action="{% url 'remove_from_cart' item.product.id %}" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="remove-item"><i class="fas fa-trash-alt"></i> Remove</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="cart-item-total">₹{{ item.total_price }}</div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="cart-summary">
+            <h3>Order Summary</h3>
+            
+            <div class="summary-row">
+                <span>Subtotal</span>
+                <span id="subtotalAmount">₹{{ subtotal|default:0|floatformat:2 }}</span>
+            </div>
+            
+            <div class="shipping-row">
+                <span>Delivery Charges</span>
+                <span id="deliveryAmount">₹{{ delivery_charge|default:0|floatformat:2 }}</span>
+            </div>
+            
+            <div class="total-row">
+                <span>Grand Total</span>
+                <span id="grandTotal">₹{{ grand_total|default:0|floatformat:2 }}</span>
+            </div>
+            
+            <div class="shipping-progress" id="shippingProgress">
+                <div class="shipping-progress-text">
+                    <span><i class="fas fa-truck"></i> Spend ₹<span id="remainingAmount">0</span> more for FREE Shipping</span>
+                    <span id="progressText">₹0/₹{{ free_shipping_threshold|default:800 }}</span>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill" id="progressFill" style="width: 0%"></div>
+                </div>
+            </div>
+            
+            <div id="freeShippingBadge" class="free-shipping-badge" style="display: none;">
+                <i class="fas fa-check-circle"></i> Congratulations! You've got FREE Shipping
+            </div>
+            
+            <a href="{% url 'checkout' %}" class="btn-checkout">Proceed to Checkout →</a>
+            <a href="{% url 'index' %}" class="btn-continue">Continue Shopping</a>
+            
+            <div style="margin-top: 1rem; padding-top: 0.5rem; border-top: 1px solid #E8F0E4;">
+                <p style="font-size: 0.7rem; color: #4A4A4A; text-align: center;">
+                    <i class="fas fa-shield-alt"></i> Secure Checkout • 100% Safe
+                </p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+    <script>
+    function calculateTotals() {
+        const RUPEE = '\u20B9';
+        const FREE_SHIPPING_THRESHOLD = parseFloat('{{ free_shipping_threshold|default:800 }}') || 800;
+        const DELIVERY_CHARGE = parseFloat('{{ base_delivery_charge|default:75 }}') || 75;
+        const FORCE_FREE_DELIVERY = '{{ force_free_delivery|yesno:"1,0" }}' === '1';
+        let subtotal = 0;
+        const items = document.querySelectorAll('.cart-item');
+        
+        items.forEach(item => {
+            const priceText = item.querySelector('.cart-item-total').innerText;
+            const price = parseFloat(priceText.replace(/[^\d.]/g, ''));
+            if (!isNaN(price)) {
+                subtotal += price;
+            }
+        });
+        
+        // Update subtotal display
+        document.getElementById('subtotalAmount').innerText = RUPEE + subtotal.toFixed(2);
+        
+        // Calculate delivery charges
+        let deliveryCharge = 0;
+        let isFreeShipping = false;
+        
+        if (FORCE_FREE_DELIVERY || subtotal >= FREE_SHIPPING_THRESHOLD) {
+            deliveryCharge = 0;
+            isFreeShipping = true;
+        } else {
+            deliveryCharge = DELIVERY_CHARGE;
+            isFreeShipping = false;
+        }
+        
+        // Update delivery charge display
+        if (isFreeShipping) {
+            document.getElementById('deliveryAmount').innerHTML = '<span style="color: #4CAF50;">FREE</span>';
+        } else {
+            document.getElementById('deliveryAmount').innerText = RUPEE + deliveryCharge.toFixed(2);
+        }
+        
+        // Calculate grand total
+        const grandTotal = subtotal + deliveryCharge;
+        document.getElementById('grandTotal').innerText = RUPEE + grandTotal.toFixed(2);
+        
+        // Update progress bar and remaining amount
+        if (!isFreeShipping) {
+            const remaining = FREE_SHIPPING_THRESHOLD - subtotal;
+            document.getElementById('remainingAmount').innerText = remaining.toFixed(2);
+            document.getElementById('progressText').innerHTML = RUPEE + subtotal.toFixed(2) + '/' + RUPEE + FREE_SHIPPING_THRESHOLD.toFixed(0);
+            const percentage = (subtotal / FREE_SHIPPING_THRESHOLD) * 100;
+            document.getElementById('progressFill').style.width = percentage + '%';
+            document.getElementById('shippingProgress').style.display = 'block';
+            document.getElementById('freeShippingBadge').style.display = 'none';
+        } else {
+            document.getElementById('shippingProgress').style.display = 'none';
+            document.getElementById('freeShippingBadge').style.display = 'block';
+        }
+    }
+    
+    // Calculate on page load
+    calculateTotals();
+    
+    // Recalculate after form submissions
+    document.querySelectorAll('.update-form').forEach(form => {
+        form.addEventListener('submit', function() {
+            setTimeout(() => {
+                location.reload();
+            }, 500);
+        });
+    });
+</script>
+{% endblock %}

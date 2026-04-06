@@ -1,0 +1,255 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Payment | Dr Naturals{% endblock %}
+
+{% block content %}
+<style>
+    .payment-container {
+        max-width: 550px;
+        margin: 100px auto 4rem;
+        padding: 2.5rem;
+        background: white;
+        border-radius: 40px;
+        box-shadow: 0 20px 40px -12px rgba(0,0,0,0.1);
+        text-align: center;
+        border: 1px solid rgba(76, 120, 64, 0.1);
+        position: relative;
+    }
+    .payment-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #4C7840, #6A9C5A, #4C7840);
+        border-radius: 40px 40px 0 0;
+    }
+    .payment-icon {
+        font-size: 4rem;
+        color: #4C7840;
+        margin-bottom: 1rem;
+        animation: pulse 1s ease infinite;
+    }
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+    .payment-container h1 {
+        font-size: 1.8rem;
+        color: #000000;
+        margin-bottom: 0.5rem;
+        font-family: 'Playfair Display', serif;
+    }
+    .payment-container p {
+        color: #4A4A4A;
+    }
+    .order-details {
+        background: #F5F0E8;
+        border-radius: 24px;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+    }
+    .order-details p {
+        margin: 0.5rem 0;
+    }
+    .order-details .amount {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #4C7840;
+    }
+    .loader {
+        width: 50px;
+        height: 50px;
+        border: 4px solid #E8F0E4;
+        border-top: 4px solid #4C7840;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 1.5rem auto;
+    }
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    .btn-back {
+        display: inline-block;
+        background: #E8F0E4;
+        color: #4C7840;
+        padding: 0.7rem 1.5rem;
+        border-radius: 50px;
+        text-decoration: none;
+        margin-top: 1rem;
+        transition: all 0.3s;
+    }
+    .btn-back:hover {
+        background: #D0E0D0;
+        transform: translateY(-2px);
+    }
+    .error-message {
+        background: #FEE2E2;
+        color: #DC2626;
+        padding: 1rem;
+        border-radius: 16px;
+        margin-bottom: 1rem;
+    }
+    .security-badge {
+        margin-top: 1rem;
+        font-size: 0.7rem;
+        color: #6A9C5A;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+</style>
+
+<div class="payment-container">
+    <div class="payment-icon">
+        <i class="fas fa-lock"></i>
+    </div>
+    <h1>Secure Payment</h1>
+    <p>Redirecting to payment gateway...</p>
+    
+    <div class="order-details">
+        <p><strong>Order ID:</strong> #{{ order.id }}</p>
+        <p><strong>Amount to Pay:</strong></p>
+        <div class="amount">₹{{ amount|floatformat:2 }}</div>
+    </div>
+    
+    <div class="loader"></div>
+    <p>Please do not refresh or close this page</p>
+    <a href="{% url 'cart' %}" class="btn-back">← Back to Cart</a>
+    
+    <div class="security-badge">
+        <i class="fas fa-shield-alt"></i> 100% Secure Payment
+        <i class="fas fa-credit-card"></i> All Major Cards Accepted
+    </div>
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        
+        const csrftoken = getCookie('csrftoken');
+        
+        // Validate required data
+        const razorpayKey = "{{ razorpay_key_id }}";
+        const razorpayOrderId = "{{ razorpay_order_id }}";
+        const amount = {{ amount }};
+        const orderId = {{ order.id }};
+        
+        if (!razorpayKey || razorpayKey === '') {
+            document.querySelector('.loader').style.display = 'none';
+            document.querySelector('.payment-container').innerHTML += `
+                <div class="error-message">
+                    <i class="fas fa-exclamation-triangle"></i> Payment configuration error. Please contact support.
+                </div>
+                <a href="/cart/" class="btn-back">← Back to Cart</a>
+            `;
+            return;
+        }
+        
+        if (!razorpayOrderId || razorpayOrderId === '') {
+            document.querySelector('.loader').style.display = 'none';
+            document.querySelector('.payment-container').innerHTML += `
+                <div class="error-message">
+                    <i class="fas fa-exclamation-triangle"></i> Order not found. Please try again.
+                </div>
+                <a href="/cart/" class="btn-back">← Back to Cart</a>
+            `;
+            return;
+        }
+        
+        var options = {
+            key: razorpayKey,
+            amount: Math.round(amount * 100),
+            currency: "INR",
+            name: "Dr Naturals",
+            description: "Order #" + orderId,
+            order_id: razorpayOrderId,
+            prefill: {
+                name: "{{ order.name }}",
+                email: "{{ order.email }}",
+                contact: "{{ order.phone }}"
+            },
+            theme: {
+                color: "#4C7840"
+            },
+            modal: {
+                ondismiss: function() {
+                    window.location.href = "/cart/";
+                }
+            }
+        };
+        
+        try {
+            var rzp = new Razorpay(options);
+            
+            rzp.on('payment.success', function(response) {
+                var form = document.createElement('form');
+                form.method = 'POST';
+                form.action = "{{ callback_url }}";
+                
+                var csrfInput = document.createElement('input');
+                csrfInput.type = 'hidden';
+                csrfInput.name = 'csrfmiddlewaretoken';
+                csrfInput.value = csrftoken;
+                form.appendChild(csrfInput);
+                
+                var paymentId = document.createElement('input');
+                paymentId.type = 'hidden';
+                paymentId.name = 'razorpay_payment_id';
+                paymentId.value = response.razorpay_payment_id;
+                form.appendChild(paymentId);
+                
+                var orderIdInput = document.createElement('input');
+                orderIdInput.type = 'hidden';
+                orderIdInput.name = 'razorpay_order_id';
+                orderIdInput.value = response.razorpay_order_id;
+                form.appendChild(orderIdInput);
+                
+                var signature = document.createElement('input');
+                signature.type = 'hidden';
+                signature.name = 'razorpay_signature';
+                signature.value = response.razorpay_signature;
+                form.appendChild(signature);
+                
+                document.body.appendChild(form);
+                form.submit();
+            });
+            
+            rzp.on('payment.failed', function(response) {
+                console.error('Payment failed:', response);
+                alert('Payment failed: ' + (response.error.description || 'Unknown error'));
+                window.location.href = "/cart/";
+            });
+            
+            rzp.open();
+        } catch (error) {
+            console.error('Razorpay error:', error);
+            document.querySelector('.loader').style.display = 'none';
+            document.querySelector('.payment-container').innerHTML += `
+                <div class="error-message">
+                    <i class="fas fa-exclamation-triangle"></i> Unable to initialize payment. Please try again.
+                </div>
+                <a href="/cart/" class="btn-back">← Back to Cart</a>
+            `;
+        }
+    });
+</script>
+{% endblock %}

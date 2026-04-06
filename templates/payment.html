@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Payment | Dr Naturals{% endblock %}
+
+{% block content %}
+<style>
+    .payment-container {
+        max-width: 550px;
+        margin: 100px auto 4rem;
+        padding: 2.5rem;
+        background: white;
+        border-radius: 40px;
+        box-shadow: 0 20px 40px -12px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+    .payment-icon {
+        font-size: 4rem;
+        color: #2C6E9E;
+        margin-bottom: 1rem;
+    }
+    .payment-container h1 {
+        font-size: 1.8rem;
+        color: #1E3A4D;
+        margin-bottom: 0.5rem;
+    }
+    .order-details {
+        background: #E8F0FA;
+        border-radius: 20px;
+        padding: 1.2rem;
+        margin: 1.5rem 0;
+    }
+    .order-details .amount {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #2C6E9E;
+    }
+    .loader {
+        width: 50px;
+        height: 50px;
+        border: 4px solid #E8F0FA;
+        border-top: 4px solid #2C6E9E;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 1.5rem auto;
+    }
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    .btn-back {
+        display: inline-block;
+        background: #E8F0FA;
+        color: #2C6E9E;
+        padding: 0.7rem 1.5rem;
+        border-radius: 50px;
+        text-decoration: none;
+        margin-top: 1rem;
+    }
+</style>
+
+<div class="payment-container">
+    <div class="payment-icon">
+        <i class="fas fa-lock"></i>
+    </div>
+    <h1>Secure Payment</h1>
+    <p>Redirecting to payment gateway...</p>
+    
+    <div class="order-details">
+        <p><strong>Order ID:</strong> #{{ order.id }}</p>
+        <p><strong>Amount to Pay:</strong></p>
+        <div class="amount">₹{{ amount|floatformat:2 }}</div>
+    </div>
+    
+    <div class="loader"></div>
+    <p>Please do not refresh or close this page</p>
+    <a href="{% url 'cart' %}" class="btn-back">← Back to Cart</a>
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var razorpayKey = "{{ razorpay_key_id|escapejs }}";
+        var razorpayOrderId = "{{ razorpay_order_id|escapejs }}";
+        var amountPaise = parseInt("{{ amount_paise|escapejs }}", 10);
+        var callbackUrl = "{{ callback_url|escapejs }}";
+
+        if (!razorpayKey) {
+            console.error('Razorpay key missing');
+            return;
+        }
+
+        if (!razorpayOrderId) {
+            console.error('Razorpay order id missing');
+            return;
+        }
+
+        if (!Number.isFinite(amountPaise) || amountPaise <= 0) {
+            console.error('Invalid amount', amountPaise);
+            return;
+        }
+
+        var options = {
+            key: razorpayKey,
+            amount: amountPaise,
+            currency: "INR",
+            name: "Dr Naturals",
+            description: "Order #{{ order.id }}",
+            order_id: razorpayOrderId,
+            redirect: true,
+            prefill: {
+                name: "{{ order.name|escapejs }}",
+                email: "{{ order.email|escapejs }}",
+                contact: "{{ order.phone|escapejs }}"
+            },
+            theme: { color: "#2C6E9E" },
+            modal: {
+                ondismiss: function () {
+                    window.location.href = "{% url 'cart' %}";
+                }
+            },
+            callback_url: callbackUrl,
+            handler: function (response) {
+                var form = document.createElement('form');
+                form.method = 'POST';
+                form.action = callbackUrl;
+
+                var fields = {
+                    razorpay_payment_id: response.razorpay_payment_id,
+                    razorpay_order_id: response.razorpay_order_id,
+                    razorpay_signature: response.razorpay_signature
+                };
+
+                Object.keys(fields).forEach(function (name) {
+                    var input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = name;
+                    input.value = fields[name] || '';
+                    form.appendChild(input);
+                });
+
+                document.body.appendChild(form);
+                form.submit();
+            }
+        };
+
+        try {
+            var rzp = new Razorpay(options);
+            rzp.open();
+        } catch (e) {
+            console.error('Razorpay init failed', e);
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,852 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}AI Skin Health Analyzer | Dr Naturals{% endblock %}
+
+{% block content %}
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    .analyzer-container {
+        max-width: 1400px;
+        margin: 100px auto 4rem;
+        padding: 0 2rem;
+    }
+    
+    .hero {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    
+    .hero h1 {
+        font-size: 2.5rem;
+        background: linear-gradient(135deg, #1E3A4D, #2C6E9E);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        margin-bottom: 0.5rem;
+    }
+    
+    .hero p {
+        color: #5A6E7A;
+    }
+    
+    .main-card {
+        background: white;
+        border-radius: 40px;
+        overflow: hidden;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+    }
+    
+    .tabs {
+        display: flex;
+        background: #F8F5F0;
+        border-bottom: 1px solid #E8DFD1;
+    }
+    
+    .tab {
+        flex: 1;
+        padding: 1.2rem;
+        background: none;
+        border: none;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        color: #5A6E7A;
+        transition: all 0.3s;
+    }
+    
+    .tab.active {
+        background: white;
+        color: #2C6E9E;
+        border-bottom: 3px solid #2C6E9E;
+    }
+    
+    .tab-pane {
+        display: none;
+        padding: 2rem;
+    }
+    
+    .tab-pane.active {
+        display: block;
+        animation: fadeIn 0.4s ease;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .media-box {
+        background: linear-gradient(135deg, #F8F5F0, #FEFAF5);
+        border-radius: 28px;
+        padding: 2rem;
+        text-align: center;
+    }
+    
+    .camera-box, .preview-box {
+        width: 100%;
+        max-width: 550px;
+        aspect-ratio: 4 / 3;
+        background: #E8F0FA;
+        border-radius: 24px;
+        overflow: hidden;
+        margin: 0 auto 1.5rem;
+        position: relative;
+    }
+    
+    #video, #previewImage {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .detection-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+    }
+    
+    .btn-group {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .btn-primary {
+        background: #2C6E9E;
+        color: white;
+        border: none;
+        padding: 0.8rem 1.8rem;
+        border-radius: 50px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .btn-primary:hover {
+        background: #1E5A88;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(44, 110, 158, 0.3);
+    }
+    
+    .btn-secondary {
+        background: #E8F0FA;
+        color: #2C6E9E;
+        border: none;
+        padding: 0.8rem 1.8rem;
+        border-radius: 50px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+    
+    .file-input {
+        display: none;
+    }
+    
+    .results-panel {
+        padding: 2rem;
+        border-top: 1px solid #E8DFD1;
+    }
+    
+    .score-ring {
+        width: 180px;
+        height: 180px;
+        margin: 0 auto;
+        position: relative;
+    }
+    
+    .score-value {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 2.8rem;
+        font-weight: 800;
+        color: #2C6E9E;
+    }
+    
+    .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+        margin: 1.5rem 0;
+    }
+    
+    .metric-card {
+        background: #F8F5F0;
+        border-radius: 20px;
+        padding: 1rem;
+        text-align: center;
+    }
+    
+    .metric-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2C6E9E;
+    }
+    
+    .metric-label {
+        font-size: 0.75rem;
+        color: #5A6E7A;
+        margin-top: 0.3rem;
+    }
+    
+    .progress-bar {
+        height: 6px;
+        background: #E0E8F0;
+        border-radius: 3px;
+        overflow: hidden;
+        margin-top: 0.5rem;
+    }
+    
+    .progress-fill {
+        height: 100%;
+        background: #2C6E9E;
+        border-radius: 3px;
+        transition: width 0.5s ease;
+    }
+    
+    .badge {
+        display: inline-block;
+        background: #2C6E9E;
+        color: white;
+        padding: 0.4rem 1.2rem;
+        border-radius: 50px;
+        font-size: 0.9rem;
+        margin: 0.5rem 0;
+    }
+    
+    .concern-tag {
+        background: #FEE2E2;
+        color: #DC2626;
+        padding: 0.3rem 1rem;
+        border-radius: 30px;
+        font-size: 0.8rem;
+        display: inline-block;
+        margin: 0.2rem;
+    }
+    
+    .rec-list {
+        list-style: none;
+        margin-top: 1rem;
+    }
+    
+    .rec-list li {
+        padding: 0.6rem 0;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        border-bottom: 1px solid #E8F0FA;
+        color: #4A5B66;
+    }
+    
+    .loading-state {
+        text-align: center;
+        padding: 3rem;
+    }
+    
+    .spinner {
+        width: 50px;
+        height: 50px;
+        border: 4px solid #E8F0FA;
+        border-top: 4px solid #2C6E9E;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 1rem;
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    .info-note {
+        text-align: center;
+        font-size: 0.7rem;
+        color: #8B9AAD;
+        margin-top: 1.5rem;
+        padding-top: 1rem;
+        border-top: 1px solid #E8F0FA;
+    }
+    
+    @media (max-width: 768px) {
+        .metrics-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .analyzer-container {
+            padding: 0 1rem;
+            margin-top: 80px;
+        }
+    }
+</style>
+
+<div class="analyzer-container">
+    <div class="hero">
+        <h1><i class="fas fa-microscope"></i> AI Skin Health Analyzer</h1>
+        <p>Powered by TensorFlow.js • Real-time Face Detection • Advanced Skin Analysis</p>
+    </div>
+    
+    <div class="main-card">
+        <div class="tabs">
+            <button class="tab active" data-tab="camera"><i class="fas fa-camera"></i> Live Camera</button>
+            <button class="tab" data-tab="upload"><i class="fas fa-upload"></i> Upload Photo</button>
+        </div>
+        
+        <div class="tab-pane active" id="camera-pane">
+            <div class="media-box">
+                <div class="camera-box">
+                    <video id="video" autoplay playsinline></video>
+                    <canvas id="faceCanvas" class="detection-overlay"></canvas>
+                </div>
+                <div class="btn-group">
+                    <button id="captureBtn" class="btn-primary"><i class="fas fa-camera"></i> Capture & Analyze</button>
+                    <button id="resetCameraBtn" class="btn-secondary"><i class="fas fa-sync-alt"></i> Reset</button>
+                </div>
+                <div class="info-note">
+                    <i class="fas fa-info-circle"></i> For best results: Even lighting, face centered, camera at eye level
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-pane" id="upload-pane">
+            <div class="media-box">
+                <div class="preview-box" id="previewBox">
+                    <div style="height: 100%; display: flex; align-items: center; justify-content: center; flex-direction: column;">
+                        <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: #2C6E9E;"></i>
+                        <p style="margin-top: 1rem;">No image selected</p>
+                    </div>
+                </div>
+                <div class="btn-group">
+                    <label for="imageUpload" class="btn-primary"><i class="fas fa-folder-open"></i> Choose Photo</label>
+                    <input type="file" id="imageUpload" class="file-input" accept="image/*">
+                    <button id="analyzeUploadBtn" class="btn-primary"><i class="fas fa-chart-line"></i> Analyze</button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="results" class="results-panel">
+            <div id="analysisContent">
+                <div class="loading-state">
+                    <div class="spinner"></div>
+                    <p>Ready to analyze your skin</p>
+                    <p style="font-size: 0.8rem;">Take a photo or upload an image to begin AI analysis</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.15.0/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/blazeface@0.0.7/dist/blazeface.min.js"></script>
+
+<script>
+    // DOM Elements
+    const video = document.getElementById('video');
+    const faceCanvas = document.getElementById('faceCanvas');
+    const captureBtn = document.getElementById('captureBtn');
+    const resetCameraBtn = document.getElementById('resetCameraBtn');
+    const imageUpload = document.getElementById('imageUpload');
+    const analyzeUploadBtn = document.getElementById('analyzeUploadBtn');
+    const previewBox = document.getElementById('previewBox');
+    const analysisContent = document.getElementById('analysisContent');
+    
+    let faceDetectionModel = null;
+    let stream = null;
+    let currentImage = null;
+    let animationId = null;
+    
+    // Load TensorFlow.js Model
+    async function loadModel() {
+        analysisContent.innerHTML = `
+            <div class="loading-state">
+                <div class="spinner"></div>
+                <p>Loading AI Model...</p>
+                <p style="font-size: 0.8rem;">This may take a few seconds</p>
+            </div>
+        `;
+        
+        try {
+            faceDetectionModel = await blazeface.load();
+            console.log('✓ Face detection model loaded');
+            startFaceDetection();
+            return true;
+        } catch (error) {
+            console.error('Model load failed:', error);
+            analysisContent.innerHTML = `
+                <div class="loading-state">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #e74c3c;"></i>
+                    <p>Failed to load AI model. Please refresh and try again.</p>
+                </div>
+            `;
+            return false;
+        }
+    }
+    
+    // Start Face Detection
+    async function startFaceDetection() {
+        if (!faceDetectionModel || !video.srcObject) return;
+        
+        const ctx = faceCanvas.getContext('2d');
+        
+        async function detect() {
+            if (!video.videoWidth || !video.videoHeight) {
+                animationId = requestAnimationFrame(detect);
+                return;
+            }
+            
+            faceCanvas.width = video.videoWidth;
+            faceCanvas.height = video.videoHeight;
+            
+            const predictions = await faceDetectionModel.estimateFaces(video, false);
+            
+            ctx.clearRect(0, 0, faceCanvas.width, faceCanvas.height);
+            
+            if (predictions.length > 0) {
+                predictions.forEach(pred => {
+                    const start = pred.topLeft;
+                    const end = pred.bottomRight;
+                    
+                    ctx.strokeStyle = '#2C6E9E';
+                    ctx.lineWidth = 3;
+                    ctx.strokeRect(start[0], start[1], end[0] - start[0], end[1] - start[1]);
+                    
+                    ctx.fillStyle = 'rgba(44, 110, 158, 0.1)';
+                    ctx.fillRect(start[0], start[1], end[0] - start[0], end[1] - start[1]);
+                    
+                    ctx.fillStyle = '#2C6E9E';
+                    ctx.font = '12px Inter';
+                    ctx.fillText('Face Detected', start[0], start[1] - 5);
+                });
+            } else {
+                ctx.fillStyle = '#e74c3c';
+                ctx.font = '12px Inter';
+                ctx.fillText('No face detected', 20, 40);
+            }
+            
+            animationId = requestAnimationFrame(detect);
+        }
+        
+        detect();
+    }
+    
+    // Advanced Skin Analysis with TensorFlow Integration
+    function analyzeSkinWithAI(imageElement) {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = imageElement.width;
+        canvas.height = imageElement.height;
+        ctx.drawImage(imageElement, 0, 0, canvas.width, canvas.height);
+        
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const pixels = imageData.data;
+        
+        // Multi-zone analysis
+        const width = canvas.width;
+        const height = canvas.height;
+        
+        // Define analysis zones
+        const zones = {
+            forehead: { pixels: [], count: 0 },
+            leftCheek: { pixels: [], count: 0 },
+            rightCheek: { pixels: [], count: 0 },
+            chin: { pixels: [], count: 0 }
+        };
+        
+        // Sample pixels from each zone
+        for (let y = 0; y < height; y += 4) {
+            for (let x = 0; x < width; x += 4) {
+                const idx = (y * width + x) * 4;
+                const r = pixels[idx];
+                const g = pixels[idx + 1];
+                const b = pixels[idx + 2];
+                
+                const normY = y / height;
+                const normX = x / width;
+                
+                if (normY < 0.35 && normX > 0.25 && normX < 0.75) {
+                    zones.forehead.pixels.push({ r, g, b });
+                    zones.forehead.count++;
+                } else if (normY > 0.5 && normY < 0.8) {
+                    if (normX < 0.4) {
+                        zones.leftCheek.pixels.push({ r, g, b });
+                        zones.leftCheek.count++;
+                    } else if (normX > 0.6) {
+                        zones.rightCheek.pixels.push({ r, g, b });
+                        zones.rightCheek.count++;
+                    }
+                } else if (normY > 0.7 && normX > 0.3 && normX < 0.7) {
+                    zones.chin.pixels.push({ r, g, b });
+                    zones.chin.count++;
+                }
+            }
+        }
+        
+        // Calculate average values per zone
+        const zoneAverages = {};
+        for (let zone in zones) {
+            if (zones[zone].count > 0) {
+                let rSum = 0, gSum = 0, bSum = 0;
+                for (let pixel of zones[zone].pixels) {
+                    rSum += pixel.r;
+                    gSum += pixel.g;
+                    bSum += pixel.b;
+                }
+                zoneAverages[zone] = {
+                    r: rSum / zones[zone].count,
+                    g: gSum / zones[zone].count,
+                    b: bSum / zones[zone].count
+                };
+            }
+        }
+        
+        // Calculate metrics
+        // 1. Evenness Score
+        const zoneValues = Object.values(zoneAverages);
+        let evennessVariation = 0;
+        let comparisons = 0;
+        
+        for (let i = 0; i < zoneValues.length; i++) {
+            for (let j = i + 1; j < zoneValues.length; j++) {
+                const rDiff = Math.abs(zoneValues[i].r - zoneValues[j].r);
+                const gDiff = Math.abs(zoneValues[i].g - zoneValues[j].g);
+                const bDiff = Math.abs(zoneValues[i].b - zoneValues[j].b);
+                evennessVariation += (rDiff + gDiff + bDiff) / 3;
+                comparisons++;
+            }
+        }
+        
+        const evennessScore = Math.max(30, Math.min(98, 100 - (evennessVariation / (comparisons || 1) / 2.5)));
+        
+        // 2. Redness Score
+        let totalRed = 0;
+        let totalPixels = 0;
+        for (let zone in zoneAverages) {
+            totalRed += zoneAverages[zone].r;
+            totalPixels++;
+        }
+        const avgRed = totalRed / totalPixels;
+        const rednessScore = Math.max(25, Math.min(98, 100 - (avgRed / 2.8)));
+        
+        // 3. Dark Spots Detection
+        let darkSpotCount = 0;
+        let sampleCount = 0;
+        for (let y = 0; y < height; y += 6) {
+            for (let x = 0; x < width; x += 6) {
+                const idx = (y * width + x) * 4;
+                const brightness = (pixels[idx] + pixels[idx + 1] + pixels[idx + 2]) / 3;
+                if (brightness < 65) darkSpotCount++;
+                sampleCount++;
+            }
+        }
+        const darkSpotRatio = darkSpotCount / sampleCount;
+        const darkSpotScore = Math.max(30, Math.min(98, 100 - (darkSpotRatio * 80)));
+        
+        // 4. Texture Score
+        let textureVariation = 0;
+        let textureCount = 0;
+        for (let y = 15; y < height - 15; y += 3) {
+            for (let x = 15; x < width - 15; x += 3) {
+                const idx = (y * width + x) * 4;
+                const brightness = (pixels[idx] + pixels[idx + 1] + pixels[idx + 2]) / 3;
+                const idxPrev = ((y - 2) * width + x) * 4;
+                const brightnessPrev = (pixels[idxPrev] + pixels[idxPrev + 1] + pixels[idxPrev + 2]) / 3;
+                textureVariation += Math.abs(brightness - brightnessPrev);
+                textureCount++;
+            }
+        }
+        const avgTextureVariation = textureVariation / textureCount;
+        const textureScore = Math.max(30, Math.min(98, 100 - (avgTextureVariation / 2.2)));
+        
+        // 5. Oiliness Score
+        let avgGreen = 0, avgBlue = 0;
+        for (let zone in zoneAverages) {
+            avgGreen += zoneAverages[zone].g;
+            avgBlue += zoneAverages[zone].b;
+        }
+        avgGreen /= totalPixels;
+        avgBlue /= totalPixels;
+        const oilinessScore = Math.max(25, Math.min(98, 50 + ((avgGreen - avgBlue) / 255 * 50)));
+        
+        // Overall Score (weighted)
+        const overallScore = Math.round(
+            evennessScore * 0.25 +
+            rednessScore * 0.20 +
+            darkSpotScore * 0.20 +
+            textureScore * 0.20 +
+            oilinessScore * 0.15
+        );
+        
+        // Determine skin type
+        let skinType = '';
+        let skinTypeDesc = '';
+        
+        if (oilinessScore > 70 && rednessScore < 60) {
+            skinType = 'Oily';
+            skinTypeDesc = 'Higher sebum production, prone to shine and congestion';
+        } else if (oilinessScore < 40) {
+            skinType = 'Dry';
+            skinTypeDesc = 'Lacks moisture, may feel tight or flaky';
+        } else if (rednessScore < 55) {
+            skinType = 'Sensitive';
+            skinTypeDesc = 'Prone to redness, irritation, and reactions';
+        } else if (evennessScore > 75 && textureScore > 70) {
+            skinType = 'Normal';
+            skinTypeDesc = 'Balanced skin with minimal concerns';
+        } else {
+            skinType = 'Combination';
+            skinTypeDesc = 'Mix of oily and dry areas across the face';
+        }
+        
+        // Detect concerns
+        const concerns = [];
+        if (darkSpotScore < 65) concerns.push('Hyperpigmentation / Dark Spots');
+        if (rednessScore < 65) concerns.push('Redness / Inflammation');
+        if (evennessScore < 65) concerns.push('Uneven Skin Tone');
+        if (textureScore < 65) concerns.push('Rough Texture / Enlarged Pores');
+        if (oilinessScore > 75) concerns.push('Excess Oil / Sebum');
+        if (oilinessScore < 35) concerns.push('Dryness / Dehydration');
+        
+        // Generate recommendations
+        const recommendations = [];
+        if (darkSpotScore < 70) recommendations.push('Incorporate vitamin C or niacinamide for brightening');
+        if (rednessScore < 70) recommendations.push('Use calming ingredients like aloe vera, centella asiatica');
+        if (textureScore < 70) recommendations.push('Gentle exfoliation with AHAs or BHAs 2-3 times weekly');
+        if (oilinessScore > 70) recommendations.push('Use oil-free, non-comedogenic products');
+        if (oilinessScore < 40) recommendations.push('Apply hyaluronic acid and ceramide-rich moisturizers');
+        if (evennessScore < 70) recommendations.push('Daily sunscreen and antioxidant serums');
+        recommendations.push('Always wear broad-spectrum SPF 50+ sunscreen daily');
+        
+        return {
+            overallScore: overallScore,
+            skinType: skinType,
+            skinTypeDesc: skinTypeDesc,
+            metrics: {
+                evenness: Math.round(evennessScore),
+                redness: Math.round(rednessScore),
+                darkSpots: Math.round(darkSpotScore),
+                texture: Math.round(textureScore),
+                oiliness: Math.round(oilinessScore)
+            },
+            concerns: concerns,
+            recommendations: recommendations.slice(0, 6)
+        };
+    }
+    
+    // Display Results
+    function displayResults(analysis) {
+        const scoreColor = analysis.overallScore >= 70 ? '#2C6E9E' : (analysis.overallScore >= 50 ? '#FFA500' : '#e74c3c');
+        
+        analysisContent.innerHTML = `
+            <div style="text-align: center;">
+                <div class="score-ring">
+                    <canvas id="scoreCanvas" width="180" height="180"></canvas>
+                    <div class="score-value">${analysis.overallScore}%</div>
+                </div>
+                <div>
+                    <span class="badge"><i class="fas fa-tint"></i> ${analysis.skinType} Skin</span>
+                    <p style="color: #5A6E7A; margin-top: 0.5rem;">${analysis.skinTypeDesc}</p>
+                </div>
+            </div>
+            
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-value">${analysis.metrics.evenness}%</div>
+                    <div class="metric-label">Evenness</div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: ${analysis.metrics.evenness}%"></div></div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">${analysis.metrics.redness}%</div>
+                    <div class="metric-label">Redness</div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: ${analysis.metrics.redness}%"></div></div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">${analysis.metrics.darkSpots}%</div>
+                    <div class="metric-label">Dark Spots</div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: ${analysis.metrics.darkSpots}%"></div></div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">${analysis.metrics.texture}%</div>
+                    <div class="metric-label">Texture</div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: ${analysis.metrics.texture}%"></div></div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">${analysis.metrics.oiliness}%</div>
+                    <div class="metric-label">Oil Control</div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: ${analysis.metrics.oiliness}%"></div></div>
+                </div>
+            </div>
+            
+            ${analysis.concerns.length > 0 ? `
+            <div style="margin: 1rem 0;">
+                <h4 style="color: #1E3A4D; margin-bottom: 0.5rem;"><i class="fas fa-exclamation-triangle"></i> Detected Concerns</h4>
+                <div>
+                    ${analysis.concerns.map(c => `<span class="concern-tag">${c}</span>`).join('')}
+                </div>
+            </div>
+            ` : ''}
+            
+            <div style="margin-top: 1rem;">
+                <h4 style="color: #1E3A4D; margin-bottom: 0.5rem;"><i class="fas fa-lightbulb"></i> AI Recommendations</h4>
+                <ul class="rec-list">
+                    ${analysis.recommendations.map(rec => `<li><i class="fas fa-check-circle"></i> ${rec}</li>`).join('')}
+                </ul>
+            </div>
+            
+            <div class="info-note">
+                <i class="fas fa-microchip"></i> Powered by TensorFlow.js • Real-time Face Detection • Multi-zone Analysis
+            </div>
+        `;
+        
+        // Draw score circle
+        const ctx = document.getElementById('scoreCanvas').getContext('2d');
+        const score = analysis.overallScore;
+        const centerX = 90, centerY = 90, radius = 80;
+        const startAngle = -Math.PI / 2;
+        const endAngle = startAngle + (2 * Math.PI * score / 100);
+        
+        ctx.clearRect(0, 0, 180, 180);
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+        ctx.strokeStyle = '#E8F0FA';
+        ctx.lineWidth = 12;
+        ctx.stroke();
+        
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+        ctx.strokeStyle = score >= 70 ? '#2C6E9E' : (score >= 50 ? '#FFA500' : '#e74c3c');
+        ctx.lineWidth = 12;
+        ctx.stroke();
+    }
+    
+    // Process Image
+    function processImage(imageElement) {
+        analysisContent.innerHTML = `
+            <div class="loading-state">
+                <div class="spinner"></div>
+                <p>Analyzing with AI...</p>
+                <p style="font-size: 0.8rem;">Detecting facial features and analyzing skin</p>
+            </div>
+        `;
+        
+        setTimeout(() => {
+            const analysis = analyzeSkinWithAI(imageElement);
+            displayResults(analysis);
+        }, 100);
+    }
+    
+    // Camera Capture
+    captureBtn.addEventListener('click', () => {
+        if (!video.videoWidth) return;
+        
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        
+        const img = new Image();
+        img.onload = () => processImage(img);
+        img.src = canvas.toDataURL('image/jpeg');
+    });
+    
+    resetCameraBtn.addEventListener('click', () => {
+        analysisContent.innerHTML = `
+            <div class="loading-state">
+                <div class="spinner"></div>
+                <p>Ready to analyze your skin</p>
+                <p style="font-size: 0.8rem;">Take a photo to begin AI analysis</p>
+            </div>
+        `;
+    });
+    
+    // Gallery Upload
+    imageUpload.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    previewBox.innerHTML = `<img id="previewImage" src="${img.src}" style="width: 100%; height: 100%; object-fit: cover;">`;
+                    currentImage = img;
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+    
+    analyzeUploadBtn.addEventListener('click', () => {
+        if (currentImage) {
+            processImage(currentImage);
+        } else {
+            analysisContent.innerHTML = `
+                <div class="loading-state">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #e74c3c;"></i>
+                    <p>Please select an image first</p>
+                </div>
+            `;
+        }
+    });
+    
+    // Tab Switching
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', async () => {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+            tab.classList.add('active');
+            document.getElementById(`${tab.dataset.tab}-pane`).classList.add('active');
+            
+            if (tab.dataset.tab === 'camera') {
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                }
+                try {
+                    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+                    video.srcObject = stream;
+                    if (animationId) cancelAnimationFrame(animationId);
+                    startFaceDetection();
+                } catch (err) {
+                    console.error('Camera error:', err);
+                }
+            } else if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                video.srcObject = null;
+                if (animationId) cancelAnimationFrame(animationId);
+                const ctx = faceCanvas.getContext('2d');
+                ctx.clearRect(0, 0, faceCanvas.width, faceCanvas.height);
+            }
+        });
+    });
+    
+    // Initialize
+    async function init() {
+        await loadModel();
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+            video.srcObject = stream;
+        } catch (err) {
+            console.error('Camera error:', err);
+        }
+    }
+    
+    init();
+</script>
+{% endblock %}

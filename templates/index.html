@@ -1,0 +1,1026 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dr Naturals | Ayurvedic Apothecary{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background:
+            radial-gradient(circle at top left, rgba(76, 120, 64, 0.08), transparent 22%),
+            radial-gradient(circle at top right, rgba(176, 141, 87, 0.10), transparent 24%),
+            linear-gradient(180deg, #fcfbf7 0%, #f7f1e8 48%, #fbfaf7 100%);
+    }
+
+    .home-decor {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+        overflow: hidden;
+    }
+
+    .decor-bubble,
+    .decor-orb {
+        position: absolute;
+        border-radius: 50%;
+        opacity: 0.45;
+        animation-timing-function: ease-in-out;
+        animation-iteration-count: infinite;
+    }
+
+    .decor-bubble {
+        background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.75), rgba(76,120,64,0.12));
+        border: 1px solid rgba(255,255,255,0.45);
+        box-shadow: inset 0 0 14px rgba(255,255,255,0.4);
+        animation-name: floatBubble;
+    }
+
+    .decor-orb {
+        filter: blur(30px);
+        opacity: 0.22;
+        animation-name: floatOrb;
+    }
+
+    .bubble-1 { width: 140px; height: 140px; left: 4%; top: 18%; animation-duration: 14s; }
+    .bubble-2 { width: 90px; height: 90px; right: 8%; top: 28%; animation-duration: 11s; }
+    .bubble-3 { width: 110px; height: 110px; left: 10%; bottom: 18%; animation-duration: 13s; }
+    .bubble-4 { width: 72px; height: 72px; right: 16%; bottom: 24%; animation-duration: 10s; }
+    .bubble-5 { width: 54px; height: 54px; left: 48%; top: 12%; animation-duration: 9s; }
+
+    .orb-1 { width: 220px; height: 220px; left: -60px; top: 90px; background: rgba(76, 120, 64, 0.18); animation-duration: 16s; }
+    .orb-2 { width: 260px; height: 260px; right: -90px; top: 220px; background: rgba(176, 141, 87, 0.2); animation-duration: 18s; }
+    .orb-3 { width: 220px; height: 220px; right: 12%; bottom: 80px; background: rgba(76, 120, 64, 0.12); animation-duration: 15s; }
+
+    .home-page-wrap {
+        position: relative;
+        z-index: 1;
+    }
+
+    @keyframes floatBubble {
+        0%, 100% { transform: translateY(0) translateX(0) scale(1); }
+        50% { transform: translateY(-18px) translateX(8px) scale(1.04); }
+    }
+
+    @keyframes floatOrb {
+        0%, 100% { transform: translateY(0) translateX(0); }
+        50% { transform: translateY(-24px) translateX(14px); }
+    }
+
+    /* Hero Banner Carousel - NO NAVIGATION ARROWS */
+    .hero-banner-carousel {
+        margin-top: 60px;
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+    }
+    .banner-swiper {
+        width: 100%;
+        height: 85vh;
+        min-height: 550px;
+        border-bottom-left-radius: 42px;
+        border-bottom-right-radius: 42px;
+        overflow: hidden;
+        box-shadow: 0 22px 40px -24px rgba(0,0,0,0.28);
+    }
+    .banner-slide {
+        position: relative;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+    .banner-media {
+        position: absolute;
+        inset: 0;
+        background-size: cover;
+        background-position: center;
+        transform: scale(1.02);
+    }
+    .banner-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background:
+            linear-gradient(90deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0) 100%),
+            radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.15));
+    }
+    .banner-content {
+        position: absolute;
+        bottom: 20%;
+        left: 8%;
+        right: auto;
+        text-align: left;
+        color: white;
+        z-index: 2;
+        padding: 2rem;
+        animation: fadeInLeft 0.8s ease;
+        max-width: 550px;
+    }
+    .banner-content h2 {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        text-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
+        font-family: 'Playfair Display', serif;
+        color: white;
+        line-height: 1.2;
+    }
+    .banner-content p {
+        font-size: 1.1rem;
+        margin-bottom: 1.8rem;
+        opacity: 0.95;
+        color: white;
+        text-shadow: 0 1px 5px rgba(0,0,0,0.2);
+        line-height: 1.6;
+    }
+    .banner-btn {
+        display: inline-block;
+        background: #4C7840;
+        color: white;
+        padding: 0.9rem 2.2rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.4s ease;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        font-size: 1rem;
+        letter-spacing: 0.5px;
+        box-shadow: 0 16px 26px -18px rgba(58, 94, 48, 0.75);
+    }
+    .banner-btn:hover {
+        background: #3A5E30;
+        transform: translateY(-3px);
+        box-shadow: 0 15px 35px -10px rgba(58, 94, 48, 0.5);
+    }
+    .banner-swiper .swiper-button-next,
+    .banner-swiper .swiper-button-prev {
+        display: none !important;
+    }
+    .banner-swiper .swiper-pagination {
+        bottom: 30px;
+        text-align: center;
+    }
+    .banner-swiper .swiper-pagination-bullet {
+        background: white;
+        opacity: 0.6;
+        width: 10px;
+        height: 10px;
+    }
+    .banner-swiper .swiper-pagination-bullet-active {
+        background: #4C7840;
+        opacity: 1;
+        width: 25px;
+        border-radius: 10px;
+    }
+
+    @keyframes fadeInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    /* Most Popular Section */
+    .most-popular-section {
+        max-width: 1400px;
+        margin: 5rem auto;
+        padding: 0 2rem;
+    }
+    .section-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+    .section-subtitle {
+        font-size: 0.8rem;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        color: #4C7840;
+        margin-bottom: 0.5rem;
+    }
+    .section-title {
+        font-size: 2.5rem;
+        color: #000000;
+        font-family: 'Playfair Display', serif;
+    }
+    .popular-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+    }
+    .popular-card {
+        background: rgba(255,255,255,0.92);
+        border-radius: 28px;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        cursor: pointer;
+        border: 1px solid rgba(76, 120, 64, 0.1);
+        position: relative;
+        backdrop-filter: blur(8px);
+        box-shadow: 0 20px 36px -30px rgba(0,0,0,0.28);
+    }
+    .popular-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 25px 45px -15px rgba(76, 120, 64, 0.25);
+        border-color: #4C7840;
+    }
+    .popular-img-wrapper {
+        height: 260px;
+        overflow: hidden;
+        position: relative;
+    }
+    .popular-img {
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        transition: transform 0.6s;
+    }
+    .popular-card:hover .popular-img {
+        transform: scale(1.08);
+    }
+    .popular-info {
+        padding: 1.2rem;
+    }
+    .popular-info h3 {
+        font-size: 1rem;
+        color: #000000;
+        margin-bottom: 0.3rem;
+        font-weight: 600;
+    }
+    .popular-category {
+        font-size: 0.7rem;
+        color: #4C7840;
+        margin-bottom: 0.5rem;
+    }
+    .popular-price {
+        font-weight: 700;
+        color: #000000;
+        font-size: 1.1rem;
+        margin-bottom: 0.8rem;
+    }
+    .button-group {
+        display: flex;
+        gap: 0.8rem;
+        align-items: center;
+    }
+    .popular-btn {
+        flex: 1;
+        background: #4C7840;
+        color: white;
+        border: none;
+        padding: 0.6rem;
+        border-radius: 40px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: 0.3s;
+        text-align: center;
+    }
+    .popular-btn:hover {
+        background: #3A5E30;
+        transform: translateY(-2px);
+    }
+    .buy-now-btn {
+        flex: 1;
+        background: transparent;
+        border: 2px solid #4C7840;
+        color: #4C7840;
+        padding: 0.6rem;
+        border-radius: 40px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: 0.3s;
+        text-align: center;
+    }
+    .buy-now-btn:hover {
+        background: #4C7840;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    /* Categories Section */
+    .categories-section {
+        background: linear-gradient(180deg, rgba(255,255,255,0.45) 0%, rgba(245,240,232,0.92) 100%);
+        padding: 5rem 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+    .categories-section::before {
+        content: '';
+        position: absolute;
+        width: 240px;
+        height: 240px;
+        border-radius: 50%;
+        background: rgba(76, 120, 64, 0.06);
+        top: -70px;
+        right: 8%;
+        filter: blur(18px);
+    }
+    .category-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 1;
+    }
+    .category-card {
+        background: white;
+        border-radius: 32px;
+        overflow: hidden;
+        transition: all 0.4s;
+        cursor: pointer;
+        border: 1px solid rgba(76, 120, 64, 0.15);
+        position: relative;
+        text-decoration: none;
+        display: block;
+        box-shadow: 0 20px 34px -26px rgba(0,0,0,0.22);
+    }
+    .category-card:hover {
+        transform: translateY(-12px);
+        box-shadow: 0 25px 40px -12px rgba(76, 120, 64, 0.2);
+        border-color: #4C7840;
+    }
+    .category-img {
+        height: 240px;
+        background-size: cover;
+        background-position: center;
+        transition: transform 0.5s;
+    }
+    .category-card:hover .category-img {
+        transform: scale(1.05);
+    }
+    .category-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+        padding: 2rem 1.5rem 1.5rem;
+        color: white;
+    }
+    .category-overlay h3 {
+        font-size: 1.6rem;
+        margin-bottom: 0.3rem;
+        color: white;
+    }
+    .category-overlay p {
+        font-size: 0.85rem;
+        opacity: 0.9;
+        color: white;
+    }
+
+    /* Featured Products Section */
+    .featured-section {
+        max-width: 1400px;
+        margin: 5rem auto;
+        padding: 0 2rem;
+    }
+    .featured-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 2rem;
+    }
+    .featured-card {
+        background: rgba(255,255,255,0.92);
+        border-radius: 28px;
+        overflow: hidden;
+        transition: all 0.4s;
+        cursor: pointer;
+        border: 1px solid rgba(76, 120, 64, 0.1);
+        backdrop-filter: blur(8px);
+        box-shadow: 0 20px 36px -28px rgba(0,0,0,0.26);
+    }
+    .featured-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px -12px rgba(76, 120, 64, 0.2);
+        border-color: #4C7840;
+    }
+    .featured-img-wrapper {
+        height: 260px;
+        overflow: hidden;
+        position: relative;
+        background: #E8F0E4;
+    }
+    .featured-img {
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        transition: transform 0.6s;
+    }
+    .featured-card:hover .featured-img {
+        transform: scale(1.05);
+    }
+    .featured-badge {
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        background: rgba(76, 120, 64, 0.9);
+        padding: 0.3rem 0.8rem;
+        border-radius: 30px;
+        font-size: 0.7rem;
+        color: white;
+        box-shadow: 0 10px 18px -12px rgba(76,120,64,0.6);
+    }
+    .featured-info {
+        padding: 1.2rem;
+    }
+    .featured-info h3 {
+        font-size: 1rem;
+        color: #000000;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+    .featured-desc {
+        font-size: 0.8rem;
+        color: #4A4A4A;
+        line-height: 1.4;
+        margin-bottom: 0.5rem;
+    }
+    .featured-price-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 0.8rem;
+        gap: 1rem;
+    }
+    .featured-price {
+        font-weight: 700;
+        color: #000000;
+        font-size: 1.1rem;
+    }
+    .featured-btn {
+        background: #4C7840;
+        color: white;
+        border: none;
+        border-radius: 40px;
+        padding: 0.4rem 1rem;
+        cursor: pointer;
+        font-size: 0.75rem;
+        transition: 0.3s;
+    }
+    .featured-btn:hover {
+        background: #3A5E30;
+        transform: scale(1.05);
+    }
+    .featured-buy-btn {
+        background: transparent;
+        border: 1.5px solid #4C7840;
+        color: #4C7840;
+        border-radius: 40px;
+        padding: 0.4rem 1rem;
+        cursor: pointer;
+        font-size: 0.75rem;
+        transition: 0.3s;
+    }
+    .featured-buy-btn:hover {
+        background: #4C7840;
+        color: white;
+    }
+    .button-group-featured {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+    }
+
+    /* About Homeopathy Section */
+    .about-section {
+        max-width: 1400px;
+        margin: 5rem auto;
+        padding: 0 2rem;
+    }
+    
+    .about-bordered-wrapper {
+        border: 3px solid rgba(76, 120, 64, 0.28);
+        border-radius: 48px;
+        padding: 2.5rem;
+        background: rgba(255,255,255,0.92);
+        transition: all 0.3s ease;
+        box-shadow: 0 15px 35px -12px rgba(0,0,0,0.05);
+        backdrop-filter: blur(8px);
+    }
+    
+    .about-bordered-wrapper:hover {
+        border-color: #4C7840;
+        box-shadow: 0 0 30px rgba(76, 120, 64, 0.12);
+    }
+    
+    .about-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+        align-items: center;
+    }
+    
+    .about-content h2 {
+        font-size: 2rem;
+        color: #000000;
+        margin-bottom: 1rem;
+    }
+    
+    .about-content p {
+        color: #4A4A4A;
+        line-height: 1.8;
+        margin-bottom: 1rem;
+    }
+    
+    .about-features {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+    
+    .feature-item {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        padding: 0.8rem;
+        background: #F5F0E8;
+        border-radius: 16px;
+        transition: all 0.3s;
+        box-shadow: 0 12px 22px -20px rgba(0,0,0,0.2);
+    }
+    
+    .feature-item:hover {
+        transform: translateX(5px);
+        background: #E8F0E4;
+    }
+    
+    .feature-item i {
+        font-size: 1.5rem;
+        color: #4C7840;
+    }
+    
+    .feature-item span {
+        font-weight: 500;
+        color: #000000;
+    }
+    
+    .about-image-slider {
+        position: relative;
+        border-radius: 32px;
+        overflow: hidden;
+        box-shadow: 0 20px 40px -12px rgba(0,0,0,0.1);
+        aspect-ratio: 4 / 3;
+        cursor: grab;
+    }
+    
+    .about-image-slider:active {
+        cursor: grabbing;
+    }
+    
+    .slide-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.5s;
+    }
+    
+    .about-image-slider:hover .slide-image {
+        transform: scale(1.02);
+    }
+    
+    .about-swiper .swiper-button-next,
+    .about-swiper .swiper-button-prev {
+        display: none !important;
+    }
+    
+    .about-swiper .swiper-pagination-bullet {
+        background: #4C7840;
+        opacity: 0.4;
+    }
+    
+    .about-swiper .swiper-pagination-bullet-active {
+        background: #4C7840;
+        opacity: 1;
+    }
+
+    .scroll-reveal {
+        opacity: 0;
+        transform: translateY(40px);
+        transition: all 0.8s ease;
+    }
+    .scroll-reveal.revealed {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .custom-toast {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background: #4C7840;
+        color: white;
+        padding: 12px 24px;
+        border-radius: 50px;
+        font-weight: 500;
+        z-index: 9999;
+        opacity: 0;
+        transform: translateX(100%);
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 14px;
+    }
+    .custom-toast.show {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    .custom-toast i {
+        font-size: 18px;
+    }
+
+    @media (max-width: 768px) {
+        .banner-content h2 { font-size: 2rem; }
+        .banner-content { left: 5%; bottom: 15%; }
+        .banner-swiper { height: 60vh; min-height: 450px; border-bottom-left-radius: 28px; border-bottom-right-radius: 28px; }
+        .category-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+        .popular-grid, .featured-grid { grid-template-columns: 1fr; }
+        .section-title { font-size: 1.8rem; }
+        .about-grid { grid-template-columns: 1fr; }
+        .about-features { grid-template-columns: 1fr; }
+        .about-bordered-wrapper { padding: 1.5rem; }
+        .button-group { flex-direction: column; width: 100%; }
+        .popular-btn, .buy-now-btn { width: 100%; }
+        .custom-toast { bottom: 20px; right: 20px; left: 20px; text-align: center; justify-content: center; }
+        .button-group-featured { flex-direction: column; width: 100%; }
+        .featured-btn, .featured-buy-btn { width: 100%; text-align: center; }
+    }
+</style>
+
+<div class="home-decor">
+    <span class="decor-orb orb-1"></span>
+    <span class="decor-orb orb-2"></span>
+    <span class="decor-orb orb-3"></span>
+    <span class="decor-bubble bubble-1"></span>
+    <span class="decor-bubble bubble-2"></span>
+    <span class="decor-bubble bubble-3"></span>
+    <span class="decor-bubble bubble-4"></span>
+    <span class="decor-bubble bubble-5"></span>
+</div>
+
+<div class="home-page-wrap">
+<!-- Hero Banner Carousel - 3 BEAUTIFUL IMAGES -->
+<div class="hero-banner-carousel">
+  <div class="swiper banner-swiper">
+    <div class="swiper-wrapper">
+
+      <div class="swiper-slide banner-slide">
+        <div class="banner-media" style="background-image:url('{% static 'images/hero_bann1.jpg' %}');"></div>
+        <div class="banner-overlay"></div>
+        <div class="banner-content">
+          <h2>Pure. Potent. Natural.</h2>
+          <p>Ancient formulations, modern science for your wellness journey.</p>
+          <a href="#featured" class="banner-btn">Discover Collection →</a>
+        </div>
+      </div>
+
+      <div class="swiper-slide banner-slide">
+       <div class="banner-media" style="background-image:url('{% static 'images/ayurvedicimg2.jpg' %}');"></div>
+        <div class="banner-overlay"></div>
+        <div class="banner-content">
+          <h2>Holistic Healing</h2>
+          <p>Homeopathy meets Ayurveda, gentle, effective care.</p>
+          <a href="{% url 'medicines' %}" class="banner-btn">Shop Medicines →</a>
+        </div>
+      </div>
+
+      <div class="swiper-slide banner-slide">
+       <div class="banner-media" style="background-image:url('{% static 'images/haircare2banner.jpg' %}');"></div>
+        <div class="banner-overlay"></div>
+        <div class="banner-content">
+          <h2>Ayurvedic Wisdom</h2>
+          <p>Rooted in tradition, backed by science.</p>
+          <a href="{% url 'haircare' %}" class="banner-btn">Explore Haircare →</a>
+        </div>
+      </div>
+
+    </div>
+    <div class="swiper-pagination"></div>
+  </div>
+</div>
+
+
+{% if most_popular %}
+<div class="most-popular-section">
+    <div class="section-header scroll-reveal">
+        <div class="section-subtitle">⭐ MOST POPULAR</div>
+        <h2 class="section-title">Customer Favorites</h2>
+    </div>
+    <div class="popular-grid">
+        {% for product in most_popular %}
+        <div class="popular-card" data-product-slug="{{ product.slug }}">
+            <div class="popular-img-wrapper">
+                {% if product.image %}
+                <div class="popular-img" style="background-image: url('{{ product.image.url }}');"></div>
+                {% else %}
+                <div class="popular-img" style="background-image: url('https://placehold.co/500x500/E8F0E4/4C7840?text={{ product.name|slice:":15" }}');"></div>
+                {% endif %}
+            </div>
+            <div class="popular-info">
+                <h3>{{ product.name }}</h3>
+                <div class="popular-category">{{ product.get_category_display }}</div>
+                <div class="popular-price">₹{{ product.price }}</div>
+                <div class="button-group">
+                    <button class="popular-btn add-to-cart-btn" data-product-id="{{ product.id }}" data-product-name="{{ product.name }}"><i class="fas fa-shopping-bag"></i> Add to Cart</button>
+                    <button class="buy-now-btn" data-product-id="{{ product.id }}"><i class="fas fa-bolt"></i> Buy Now</button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<div class="categories-section">
+    <div class="section-header scroll-reveal">
+        <div class="section-subtitle">SHOP BY NEED</div>
+        <h2 class="section-title">Choose Your Wellness Path</h2>
+    </div>
+    <div class="category-grid">
+        <a href="{% url 'haircare' %}" class="category-card scroll-reveal">
+            <div class="category-img" style="background-image: url('{% static 'images/hairaest.jpg' %}');"></div>
+            <div class="category-overlay">
+                <h3>Haircare</h3>
+                <p>Strength elixirs & scalp tonics</p>
+            </div>
+        </a>
+        <a href="{% url 'skincare' %}" class="category-card scroll-reveal">
+            <div class="category-img" style="background-image: url('{% static 'images/skincareesdp.jpg' %}');"></div>
+            <div class="category-overlay">
+                <h3>Skincare</h3>
+                <p>Radiance serums & velvety butters</p>
+            </div>
+        </a>
+        <a href="{% url 'medicines' %}" class="category-card scroll-reveal">
+            <div class="category-img" style="background-image: url('{% static 'images/ayurvedicimg2.jpg' %}');"></div>
+            <div class="category-overlay">
+                <h3>Medicines</h3>
+                <p>Homeopathy & herbal remedies</p>
+            </div>
+        </a>
+    </div>
+</div>
+
+<div id="featured" class="featured-section">
+    <div class="section-header scroll-reveal">
+        <div class="section-subtitle">✨ FEATURED COLLECTION</div>
+        <h2 class="section-title">Handpicked For You</h2>
+    </div>
+    <div class="featured-grid">
+        {% for product in featured_products %}
+        <div class="featured-card" data-product-slug="{{ product.slug }}">
+            <div class="featured-img-wrapper">
+                {% if product.image %}
+                <div class="featured-img" style="background-image: url('{{ product.image.url }}');"></div>
+                {% else %}
+                <div class="featured-img" style="background-image: url('https://placehold.co/500x500/E8F0E4/4C7840?text={{ product.name|slice:":15" }}');"></div>
+                {% endif %}
+                <span class="featured-badge">
+                    {% if product.is_popular %}🔥 Popular{% else %}✨ Best Seller{% endif %}
+                </span>
+            </div>
+            <div class="featured-info">
+                <h3>{{ product.name }}</h3>
+                <p class="featured-desc">{{ product.short_desc|default:product.description|slice:":70" }}...</p>
+                <div class="featured-price-row">
+                    <span class="featured-price">₹{{ product.price }}</span>
+                    <div class="button-group-featured">
+                        <button class="featured-btn add-to-cart-btn" data-product-id="{{ product.id }}" data-product-name="{{ product.name }}"><i class="fas fa-shopping-bag"></i> Add</button>
+                        <button class="featured-buy-btn buy-now-btn" data-product-id="{{ product.id }}"><i class="fas fa-bolt"></i> Buy</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="about-section scroll-reveal">
+    <div class="about-bordered-wrapper">
+        <div class="about-grid">
+            <div class="about-content">
+                <h2>The Science of Homeopathy</h2>
+                <p>Homeopathy is a natural system of medicine that works with your body's own healing mechanisms. Developed over 200 years ago, it's based on the principle of <strong>"like cures like"</strong> - using highly diluted natural substances to trigger the body's natural healing response.</p>
+                <p>Our homeopathic remedies are carefully prepared using traditional methods, ensuring purity and potency. Each remedy is selected to address specific health concerns while supporting overall wellness.</p>
+                <div class="about-features">
+                    <div class="feature-item">
+                        <i class="fas fa-leaf"></i>
+                        <span>100% Natural Ingredients</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-flask"></i>
+                        <span>Scientifically Prepared</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-heartbeat"></i>
+                        <span>No Side Effects</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-globe"></i>
+                        <span>Globally Recognized</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="about-image-slider">
+                <div class="swiper about-swiper">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide">
+                            <img src="{% static 'images/undergroundp.jpg' %}" alt="Homeopathy Remedies" class="slide-image" onerror="this.src='https://placehold.co/800x600/4C7840/white?text=Natural+Healing'">
+                        </div>
+                        <div class="swiper-slide">
+                            <img src="{% static 'images/downdp.jpg' %}" alt="Natural Healing" class="slide-image" onerror="this.src='https://placehold.co/800x600/3A5E30/white?text=Herbal+Remedies'">
+                        </div>
+                    </div>
+                    <div class="swiper-pagination"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="toastMessage" class="custom-toast">
+    <i class="fas fa-check-circle"></i>
+    <span id="toastText">Product added to cart!</span>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        if (document.querySelector('.banner-swiper')) {
+            new Swiper('.banner-swiper', {
+                loop: true,
+                autoplay: { delay: 5000, disableOnInteraction: false },
+                pagination: { el: '.swiper-pagination', clickable: true },
+                navigation: false,
+                grabCursor: true,
+                effect: 'slide'
+            });
+        }
+
+        if (document.querySelector('.about-swiper')) {
+            new Swiper('.about-swiper', {
+                loop: true,
+                autoplay: { delay: 4000, disableOnInteraction: false, pauseOnMouseEnter: true },
+                pagination: { el: '.swiper-pagination', clickable: true },
+                navigation: false,
+                grabCursor: true,
+                effect: 'slide',
+                speed: 600
+            });
+        }
+
+        const revealElements = document.querySelectorAll('.scroll-reveal');
+        function checkReveal() {
+            revealElements.forEach(el => {
+                const rect = el.getBoundingClientRect();
+                if (rect.top < window.innerHeight - 100) {
+                    el.classList.add('revealed');
+                }
+            });
+        }
+        window.addEventListener('scroll', checkReveal);
+        checkReveal();
+    });
+
+    function showToast(message, isError = false) {
+        const toast = document.getElementById('toastMessage');
+        const toastText = document.getElementById('toastText');
+        toastText.innerText = message;
+        toast.style.background = isError ? '#e74c3c' : '#4C7840';
+        toast.classList.add('show');
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 3000);
+    }
+    
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    const csrftoken = getCookie('csrftoken');
+    
+    async function addToCart(productId, productName) {
+        const btn = document.querySelector(`.add-to-cart-btn[data-product-id="${productId}"]`);
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        btn.disabled = true;
+        
+        try {
+            const response = await fetch(`/add-to-cart/${productId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `quantity=2`
+            });
+            
+            if (response.ok) {
+                const cartCount = document.querySelector('.cart-count');
+                if (cartCount) {
+                    let currentCount = parseInt(cartCount.innerText) || 0;
+                    cartCount.innerText = currentCount + 2;
+                }
+                showToast(`✓ ${productName} added! (Min 2 pieces)`);
+                return true;
+            } else {
+                const error = await response.json();
+                showToast(error.error || 'Error adding to cart', true);
+                return false;
+            }
+        } catch (error) {
+            showToast('Error adding to cart', true);
+            return false;
+        } finally {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }
+    }
+    
+    async function buyNow(productId) {
+        const btn = document.querySelector(`.buy-now-btn[data-product-id="${productId}"]`);
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        btn.disabled = true;
+        
+        try {
+            const response = await fetch(`/add-to-cart/${productId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `quantity=2&next=checkout`
+            });
+            
+            if (response.ok) {
+                window.location.href = '/checkout/';
+            } else {
+                showToast('Error processing', true);
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        } catch (error) {
+            showToast('Error processing request', true);
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }
+    }
+    
+    document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            addToCart(this.dataset.productId, this.dataset.productName);
+        });
+    });
+    
+    document.querySelectorAll('.buy-now-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            buyNow(this.dataset.productId);
+        });
+    });
+    
+    document.querySelectorAll('.popular-card, .featured-card').forEach(card => {
+        card.addEventListener('click', function(e) {
+            if (e.target.classList.contains('add-to-cart-btn') || 
+                e.target.classList.contains('buy-now-btn') ||
+                e.target.closest('.add-to-cart-btn') ||
+                e.target.closest('.buy-now-btn')) {
+                return;
+            }
+            const productSlug = this.dataset.productSlug;
+            if (productSlug) {
+                window.location.href = `/product/${productSlug}/`;
+            }
+        });
+    });
+</script>
+{% endblock %}

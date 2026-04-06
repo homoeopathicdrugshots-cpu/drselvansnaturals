@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Dr Naturals | Purely Natural, Beautifully You</title>
+  <!-- Google Fonts & Smooth Scroll -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #FEFAF5;   /* warm cream base */
+      font-family: 'Inter', sans-serif;
+      color: #2C2A29;
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+    }
+
+    /* custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #F1E9E2;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #C2A575;
+      border-radius: 10px;
+    }
+
+    /* typography */
+    h1, h2, h3, .logo, .nav-links a, .hero-title {
+      font-family: 'Playfair Display', serif;
+    }
+    .section-title {
+      font-size: 2.4rem;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      color: #3F2E24;
+      text-align: center;
+      margin-bottom: 3rem;
+      position: relative;
+    }
+    .section-title:after {
+      content: '';
+      display: block;
+      width: 70px;
+      height: 3px;
+      background: #D9B48B;
+      margin: 0.8rem auto 0;
+      border-radius: 4px;
+    }
+
+    /* header & navigation - minimalist aesthetic */
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: rgba(254, 250, 245, 0.92);
+      backdrop-filter: blur(12px);
+      z-index: 1000;
+      padding: 1rem 2rem;
+      transition: all 0.3s ease;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    .nav-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .logo {
+      font-size: 1.9rem;
+      font-weight: 600;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #4A6A3B, #9B7B4C);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      transition: transform 0.2s;
+    }
+    .logo:hover {
+      transform: scale(1.02);
+    }
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+    .nav-links a {
+      text-decoration: none;
+      font-weight: 500;
+      color: #3A2C28;
+      font-size: 1rem;
+      transition: 0.2s;
+      position: relative;
+    }
+    .nav-links a:after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: #C2A575;
+      transition: width 0.3s ease;
+    }
+    .nav-links a:hover:after {
+      width: 100%;
+    }
+
+    /* hero section */
+    .hero {
+      min-height: 85vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      background: linear-gradient(125deg, #FFF7EF 0%, #FEF2E6 100%);
+      margin-top: 70px;
+      padding: 3rem 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-content {
+      max-width: 800px;
+      z-index: 2;
+    }
+    .hero-title {
+      font-size: 3.8rem;
+      font-weight: 500;
+      color: #2F4D2D;
+      margin-bottom: 1rem;
+      animation: fadeUp 1s ease-out;
+    }
+    .hero-sub {
+      font-size: 1.2rem;
+      color: #5E5A55;
+      margin-bottom: 2rem;
+      font-weight: 400;
+      animation: fadeUp 1s ease-out 0.1s both;
+    }
+    .btn-primary {
+      background: #2F4D2D;
+      border: none;
+      padding: 0.9rem 2.2rem;
+      font-size: 1rem;
+      font-weight: 500;
+      border-radius: 40px;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(47,77,45,0.2);
+      display: inline-block;
+      text-decoration: none;
+    }
+    .btn-primary:hover {
+      background: #4A6A3B;
+      transform: translateY(-3px);
+      box-shadow: 0 12px 20px rgba(0,0,0,0.08);
+    }
+
+    /* Products grid - inspired by minimalist.co & drselvans */
+    .products-section {
+      padding: 5rem 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 2.5rem;
+    }
+    .product-card {
+      background: #FFFFFF;
+      border-radius: 32px;
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      cursor: pointer;
+      box-shadow: 0 12px 28px -8px rgba(0,0,0,0.05);
+      position: relative;
+      backdrop-filter: blur(2px);
+      border: 1px solid rgba(210, 180, 140, 0.2);
+    }
+    .product-card:hover {
+      transform: translateY(-12px) scale(1.01);
+      box-shadow: 0 28px 40px -16px rgba(0,0,0,0.15);
+      border-color: #E7D4B5;
+    }
+    .product-img {
+      height: 280px;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      transition: transform 0.6s ease;
+    }
+    .product-card:hover .product-img {
+      transform: scale(1.03);
+    }
+    .product-info {
+      padding: 1.8rem 1.5rem 2rem;
+    }
+    .product-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      font-family: 'Playfair Display', serif;
+      color: #3F2E24;
+      margin-bottom: 0.5rem;
+    }
+    .product-desc {
+      font-size: 0.9rem;
+      color: #6C625B;
+      line-height: 1.5;
+      margin: 0.8rem 0 1rem;
+    }
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .tag {
+      background: #F5EFE6;
+      padding: 0.2rem 0.8rem;
+      border-radius: 30px;
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: #7A5A3A;
+      letter-spacing: 0.3px;
+    }
+    .price {
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: #2F4D2D;
+      margin-top: 0.5rem;
+    }
+    .add-cart {
+      background: transparent;
+      border: 1.5px solid #D9B48B;
+      border-radius: 40px;
+      padding: 0.5rem 1.2rem;
+      font-weight: 500;
+      margin-top: 1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      transition: all 0.2s;
+      cursor: pointer;
+      font-size: 0.85rem;
+      color: #3F2E24;
+    }
+    .add-cart:hover {
+      background: #2F4D2D;
+      border-color: #2F4D2D;
+      color: white;
+    }
+
+    /* scroll reveal + hover looker effects */
+    .scroll-reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.7s ease;
+    }
+    .scroll-reveal.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* looker effect (glow on hover for subtle elegance) */
+    .product-card {
+      transition: all 0.35s ease;
+    }
+    .product-card:hover {
+      box-shadow: 0 20px 35px -12px rgba(82, 67, 46, 0.2), 0 0 0 1px rgba(218, 180, 106, 0.3);
+    }
+
+    /* parallax / scroll effect background */
+    .parallax-bg {
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23EADBC6" width="60px" height="60px"><path d="M12 2L15 8.5L22 9.5L17 14L18.5 21L12 17.5L5.5 21L7 14L2 9.5L9 8.5L12 2z"/></svg>') repeat;
+      opacity: 0.03;
+      position: absolute;
+      pointer-events: none;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      z-index: 0;
+    }
+
+    /* newsletter section */
+    .newsletter {
+      background: #F4EDE4;
+      margin: 4rem 2rem;
+      padding: 3rem 2rem;
+      border-radius: 48px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .newsletter h3 {
+      font-size: 1.9rem;
+      font-family: 'Playfair Display', serif;
+    }
+    .news-group {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-top: 1.5rem;
+    }
+    .news-group input {
+      padding: 0.9rem 1.5rem;
+      border-radius: 60px;
+      border: none;
+      width: 280px;
+      font-size: 0.9rem;
+      background: white;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+    .news-group button {
+      background: #2F4D2D;
+      border: none;
+      padding: 0 2rem;
+      border-radius: 60px;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    footer {
+      background: #2E2A27;
+      color: #DDD2C6;
+      padding: 3rem 2rem;
+      text-align: center;
+      font-size: 0.85rem;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 800px) {
+      .hero-title { font-size: 2.6rem; }
+      .section-title { font-size: 2rem; }
+      .nav-links { gap: 1.2rem; }
+      .products-grid { gap: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header id="header">
+  <div class="nav-container">
+    <div class="logo">🌿 dr naturals</div>
+    <ul class="nav-links">
+      <li><a href="#home">Home</a></li>
+      <li><a href="#products">Products</a></li>
+      <li><a href="#rituals">Rituals</a></li>
+      <li><a href="#contact">Journal</a></li>
+    </ul>
+  </div>
+</header>
+
+<main>
+  <!-- Hero -->
+  <section id="home" class="hero">
+    <div class="parallax-bg"></div>
+    <div class="hero-content">
+      <h1 class="hero-title">Rooted in Nature,<br>Refined for You</h1>
+      <p class="hero-sub">Clean formulas, potent botanicals — Dr Naturals brings the purest self-care rituals.</p>
+      <a href="#products" class="btn-primary">Explore essentials →</a>
+    </div>
+  </section>
+
+  <!-- Products Grid - Based on Dr.Selvan's Homeopathy product data + minimalist aesthetic -->
+  <section id="products" class="products-section">
+    <h2 class="section-title scroll-reveal">pure & potent remedies</h2>
+    <div class="products-grid" id="productsGrid"></div>
+  </section>
+
+  <!-- additional aesthetic block: nature story -->
+  <section id="rituals" class="products-section" style="padding-top: 0;">
+    <div class="scroll-reveal" style="background: #FCF8F2; border-radius: 48px; padding: 3rem 2rem; text-align: center;">
+      <i class="fas fa-leaf" style="font-size: 2.5rem; color: #9B7B4C; margin-bottom: 1rem; display: inline-block;"></i>
+      <h2 style="font-family: 'Playfair Display'; font-size: 2rem;">slow beauty, natural wisdom</h2>
+      <p style="max-width: 650px; margin: 1rem auto; color: #5A4A3A;">Every formula is crafted with earth-grown ingredients, homeopathy-inspired wellness and minimal, conscious design. Because your skin deserves respect.</p>
+    </div>
+  </section>
+
+  <!-- Newsletter + subtle scroll effect -->
+  <div class="newsletter scroll-reveal">
+    <h3>be the first to bloom 🌱</h3>
+    <p style="margin-bottom: 1rem;">get 15% off on your first ritual set</p>
+    <div class="news-group">
+      <input type="email" placeholder="your natural email" id="newsEmail">
+      <button id="subscribeBtn">Subscribe</button>
+    </div>
+    <p id="subMsg" style="font-size: 0.8rem; margin-top: 1rem; color: #4A6A3B;"></p>
+  </div>
+</main>
+
+<footer>
+  <p>© 2025 Dr Naturals — consciously crafted, endlessly natural.</p>
+  <p style="margin-top: 0.5rem;"><i class="fas fa-seedling"></i> pure ingredients · carbon-neutral shipping</p>
+</footer>
+
+<script>
+  // Product Data sourced from drselvanshomeopathy products page structure + added modern variations to match minimalist look
+  const products = [
+    {
+      name: "ABC Body Lotion",
+      desc: "A gentle, lightweight body lotion enriched with aloe vera, berberis, and calendula to hydrate, soothe, and keep skin soft and healthy.",
+      tags: ["Herbal", "Natural Ingredients", "All Adults"],
+      imgLabel: "body-lotion",
+      price: "$24",
+      bgGradient: "linear-gradient(135deg, #EADBC6, #F7EFE2)"
+    },
+    {
+      name: "Calendula & Neem Face Wash",
+      desc: "Deeply purifying yet mild, infused with neem and calendula extracts. Balances oil without stripping moisture.",
+      tags: ["Face Care", "Neem", "Oil-Control"],
+      imgLabel: "face-wash",
+      price: "$18",
+      bgGradient: "linear-gradient(145deg, #DBE7D4, #F2EDE4)"
+    },
+    {
+      name: "Rosehip + Seabuckthorn Serum",
+      desc: "Antioxidant-rich serum for radiance and even tone. Vitamin C and omegas repair dullness.",
+      tags: ["Serum", "Vitamin C", "Glow"],
+      imgLabel: "serum",
+      price: "$39",
+      bgGradient: "linear-gradient(130deg, #FDEBD8, #F8F2E9)"
+    },
+    {
+      name: "Ashwagandha Calm Balm",
+      desc: "Adaptogenic body butter with ashwagandha & chamomile. Melt away stress, nourish deeply.",
+      tags: ["Adaptogen", "Stress Relief", "Body Butter"],
+      imgLabel: "calm-balm",
+      price: "$32",
+      bgGradient: "linear-gradient(120deg, #EEDDCC, #FBF5EA)"
+    },
+    {
+      name: "Berberis Aquifolium Cream",
+      desc: "Homeopathy-inspired clarifying cream for blemishes & uneven texture. Gentle and effective.",
+      tags: ["Homeopathy", "Clarifying", "Natural"],
+      imgLabel: "berberis",
+      price: "$28",
+      bgGradient: "linear-gradient(140deg, #E0E6D9, #FCF3E8)"
+    },
+    {
+      name: "Moringa & Coconut Lip Balm",
+      desc: "Hydrating duo with moringa oil and coconut, gives sheer tinted moisture with herbal protection.",
+      tags: ["Lip Care", "Zero Waste", "Tinted"],
+      imgLabel: "lip-balm",
+      price: "$12",
+      bgGradient: "linear-gradient(125deg, #FEEAD5, #FFF6EC)"
+    }
+  ];
+
+  const productGrid = document.getElementById('productsGrid');
+
+  function generateProductCards() {
+    products.forEach((prod, idx) => {
+      const card = document.createElement('div');
+      card.className = 'product-card scroll-reveal';
+      // unique image placeholder but we craft beautiful organic abstract gradients + leaf icons to keep aesthetic and consistent 
+      // (since no actual image urls, but visual match minimalist style)
+      const imgDiv = document.createElement('div');
+      imgDiv.className = 'product-img';
+      // create a nice organic pattern as background image: elegant botanical style
+      imgDiv.style.background = `${prod.bgGradient}, url('https://placehold.co/600x500/F9F2E9/D9B48B?text=🌿+${prod.name.charAt(0)}')`;
+      imgDiv.style.backgroundSize = "cover, auto";
+      imgDiv.style.backgroundBlend = "overlay";
+      imgDiv.style.backgroundPosition = "center";
+      // For better aesthetics and uniqueness, we add SVG like leaf design (using inline pattern)
+      // but keep it minimal and elegant. Alternatively, we also add a data-attribute for hover effect.
+      
+      const infoDiv = document.createElement('div');
+      infoDiv.className = 'product-info';
+      
+      const title = document.createElement('h3');
+      title.className = 'product-title';
+      title.innerText = prod.name;
+      
+      const desc = document.createElement('p');
+      desc.className = 'product-desc';
+      desc.innerText = prod.desc;
+      
+      const tagsDiv = document.createElement('div');
+      tagsDiv.className = 'tags';
+      prod.tags.forEach(tag => {
+        const span = document.createElement('span');
+        span.className = 'tag';
+        span.innerText = tag;
+        tagsDiv.appendChild(span);
+      });
+      
+      const priceSpan = document.createElement('div');
+      priceSpan.className = 'price';
+      priceSpan.innerText = prod.price;
+      
+      const addBtn = document.createElement('button');
+      addBtn.className = 'add-cart';
+      addBtn.innerHTML = `<i class="fas fa-shopping-bag"></i> Add to ritual`;
+      addBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        alert(`✨ "${prod.name}" added to your natural ritual! ✨`);
+      });
+      
+      infoDiv.appendChild(title);
+      infoDiv.appendChild(desc);
+      infoDiv.appendChild(tagsDiv);
+      infoDiv.appendChild(priceSpan);
+      infoDiv.appendChild(addBtn);
+      
+      card.appendChild(imgDiv);
+      card.appendChild(infoDiv);
+      
+      // hover looker effect extra: a small shine (CSS already)
+      productGrid.appendChild(card);
+    });
+  }
+  
+  generateProductCards();
+
+  // scroll reveal + looker effects and scroll animations
+  const revealElements = document.querySelectorAll('.scroll-reveal');
+  
+  function checkScroll() {
+    for(let el of revealElements) {
+      const windowHeight = window.innerHeight;
+      const rect = el.getBoundingClientRect();
+      const revealPoint = 120;
+      if(rect.top < windowHeight - revealPoint) {
+        el.classList.add('revealed');
+      }
+    }
+  }
+  
+  window.addEventListener('scroll', checkScroll);
+  window.addEventListener('load', checkScroll);
+  
+  // Additional "looker effects": while scrolling product cards, parallax gentle movement
+  // hover effect on hero also (smooth)
+  const heroSection = document.querySelector('.hero');
+  if(heroSection) {
+    window.addEventListener('mousemove', (e) => {
+      let x = (e.clientX / window.innerWidth) * 20;
+      let y = (e.clientY / window.innerHeight) * 10;
+      heroSection.style.backgroundPosition = `${x}% ${y}%`;
+    });
+  }
+  
+  // smooth navbar + header scroll effect
+  const header = document.getElementById('header');
+  window.addEventListener('scroll', () => {
+    if(window.scrollY > 30) {
+      header.style.background = 'rgba(254, 250, 245, 0.97)';
+      header.style.boxShadow = '0 4px 20px rgba(0,0,0,0.02)';
+    } else {
+      header.style.background = 'rgba(254, 250, 245, 0.92)';
+      header.style.boxShadow = 'none';
+    }
+  });
+  
+  // newsletter subscription effect with simple feedback
+  const subBtn = document.getElementById('subscribeBtn');
+  const subMsg = document.getElementById('subMsg');
+  subBtn.addEventListener('click', () => {
+    const emailInput = document.getElementById('newsEmail');
+    const email = emailInput.value.trim();
+    if(email === "" || !email.includes('@')) {
+      subMsg.innerText = "🍃 please enter a valid email to stay rooted.";
+      subMsg.style.color = "#A56B3A";
+    } else {
+      subMsg.innerText = `🌼 thanks, ${email.split('@')[0]}! your natural welcome gift is on its way.`;
+      subMsg.style.color = "#2F4D2D";
+      emailInput.value = "";
+    }
+  });
+  
+  // anchor navigation smooth + offset for fixed header
+  document.querySelectorAll('.nav-links a, .btn-primary').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+      const href = this.getAttribute('href');
+      if(href && href.startsWith('#')) {
+        e.preventDefault();
+        const targetId = href.substring(1);
+        const targetElement = document.getElementById(targetId);
+        if(targetElement) {
+          const offsetTop = targetElement.offsetTop - 80;
+          window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+        }
+      }
+    });
+  });
+  
+  // extra product hover "looker": subtle inner glow
+  const style = document.createElement('style');
+  style.textContent = `
+    .product-card {
+      transition: transform 0.3s ease, box-shadow 0.4s;
+    }
+    .product-card:after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 32px;
+      opacity: 0;
+      box-shadow: inset 0 0 20px rgba(210, 170, 100, 0.2);
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+    .product-card:hover:after {
+      opacity: 1;
+    }
+    .btn-primary, .add-cart {
+      transition: all 0.2s;
+    }
+  `;
+  document.head.appendChild(style);
+  
+  // Add dynamic background parallax effect on products section (scroll effect: gentle fade)
+  window.addEventListener('scroll', () => {
+    const productsSec = document.querySelector('.products-section');
+    if(productsSec) {
+      const scrolled = window.scrollY;
+      const rate = scrolled * 0.05;
+      const bgElement = document.querySelector('.parallax-bg');
+      if(bgElement && window.innerWidth > 768) {
+        bgElement.style.transform = `translateY(${rate * 0.2}px)`;
+      }
+    }
+  });
+  
+  // initial animation for product cards: staggered reveal via scroll-reveal plus manual call
+  setTimeout(() => {
+    checkScroll();
+  }, 200);
+  
+  // little "looker effect" add floating seeds
+  const addFloatingLeaves = () => {
+    const leafDiv = document.createElement('div');
+    leafDiv.innerHTML = `<div style="position:fixed; bottom:20px; right:20px; opacity:0.3; pointer-events:none; z-index:999;"><i class="fas fa-seedling" style="font-size: 2rem; color:#9B7B4C;"></i></div>`;
+    document.body.appendChild(leafDiv);
+  };
+  addFloatingLeaves();
+</script>
+
+</body>
+</html>

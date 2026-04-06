@@ -1,0 +1,185 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Thank You | Dr Naturals{% endblock %}
+
+{% block content %}
+<style>
+    .thankyou-wrapper {
+        max-width: 700px;
+        margin: 100px auto 4rem;
+        padding: 0 2rem;
+        animation: fadeInUp 0.8s ease;
+    }
+    .thankyou-card {
+        background: white;
+        border-radius: 48px;
+        padding: 3rem;
+        text-align: center;
+        box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);
+        border: 1px solid rgba(76, 120, 64, 0.1);
+        position: relative;
+    }
+    .thankyou-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #4C7840, #6A9C5A, #4C7840);
+        border-radius: 48px 48px 0 0;
+    }
+    .success-icon {
+        width: 100px;
+        height: 100px;
+        background: linear-gradient(135deg, #4C7840, #3A5E30);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        animation: pulse 0.6s ease;
+    }
+    @keyframes pulse {
+        0% { transform: scale(0.8); opacity: 0; }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); opacity: 1; }
+    }
+    .success-icon i {
+        font-size: 3rem;
+        color: white;
+    }
+    .thankyou-card h1 {
+        font-size: 2rem;
+        color: #000000;
+        margin-bottom: 0.5rem;
+        font-family: 'Playfair Display', serif;
+    }
+    .order-number {
+        display: inline-block;
+        background: #E8F0E4;
+        padding: 0.3rem 1rem;
+        border-radius: 50px;
+        font-size: 0.9rem;
+        color: #4C7840;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+    .delivery-section {
+        background: #F5F0E8;
+        border-radius: 28px;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+        text-align: left;
+    }
+    .delivery-section h3 {
+        font-size: 1.1rem;
+        color: #000000;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .delivery-section h3 i {
+        color: #4C7840;
+    }
+    .delivery-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+    .delivery-label {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #4A4A4A;
+        margin-bottom: 0.2rem;
+    }
+    .delivery-value {
+        font-weight: 600;
+        color: #000000;
+        font-size: 0.9rem;
+    }
+    .btn-primary {
+        background: linear-gradient(135deg, #4C7840, #3A5E30);
+        color: white;
+        padding: 0.9rem 2rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        transition: all 0.3s;
+    }
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px -8px rgba(76, 120, 64, 0.4);
+    }
+    .email-notice {
+        margin-top: 1.5rem;
+        padding: 0.8rem;
+        background: #F0F4EC;
+        border-radius: 16px;
+        font-size: 0.8rem;
+        color: #4A4A4A;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+    @media (max-width: 640px) {
+        .thankyou-card {
+            padding: 1.5rem;
+        }
+        .delivery-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="thankyou-wrapper">
+    <div class="thankyou-card">
+        <div class="success-icon">
+            <i class="fas fa-check"></i>
+        </div>
+        
+        <h1>Thank You for Your Order!</h1>
+        <div class="order-number">Order #{{ order.id }}</div>
+        <p>Your order has been successfully placed and confirmed.</p>
+        
+        <div class="delivery-section">
+            <h3><i class="fas fa-truck"></i> Delivery Information</h3>
+            <div class="delivery-grid">
+                <div class="delivery-item">
+                    <div class="delivery-label">ESTIMATED DELIVERY</div>
+                    <div class="delivery-value">3-5 Business Days</div>
+                </div>
+                <div class="delivery-item">
+                    <div class="delivery-label">SHIPPING TO</div>
+                    <div class="delivery-value">{{ order.name }}</div>
+                    <div class="delivery-value">{{ order.address }}, {{ order.city }}, {{ order.state }} - {{ order.pincode }}</div>
+                </div>
+                <div class="delivery-item">
+                    <div class="delivery-label">CONTACT</div>
+                    <div class="delivery-value">{{ order.phone }}</div>
+                </div>
+                <div class="delivery-item">
+                    <div class="delivery-label">PAYMENT METHOD</div>
+                    <div class="delivery-value">Online Payment (Razorpay)</div>
+                </div>
+            </div>
+        </div>
+        
+        <a href="{% url 'index' %}" class="btn-primary">
+            <i class="fas fa-shopping-bag"></i> Continue Shopping
+        </a>
+        
+        <div class="email-notice">
+            <i class="fas fa-envelope"></i>
+            A confirmation email has been sent to <strong>{{ order.email }}</strong>
+        </div>
+    </div>
+</div>
+{% endblock %}
