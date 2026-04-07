@@ -5,18 +5,17 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # ======================== SECURITY SETTINGS ========================
-# All secrets come from environment variables - NEVER hardcode passwords!
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-change-this-in-production')
 
-# TEMPORARILY SET DEBUG = True TO SEE THE ERROR
-DEBUG = True  # Changed from os.environ.get() to True
+# SET DEBUG = False for production on PythonAnywhere
+DEBUG = False
 
+# Update ALLOWED_HOSTS for PythonAnywhere
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
-    '.onrender.com',
-    'drselvansnaturals-3.onrender.com',
-    '*',  # Allow all hosts temporarily for debugging
+    'drselvan.pythonanywhere.com',
+    'www.drselvan.pythonanywhere.com',
 ]
 
 # ======================== INSTALLED APPS ========================
@@ -107,12 +106,10 @@ DELIVERY_CHARGE = int(os.environ.get('DELIVERY_CHARGE', 75))
 FORCE_FREE_DELIVERY = os.environ.get('FORCE_FREE_DELIVERY', 'False') == 'True'
 
 # ======================== RAZORPAY PAYMENT SETTINGS ========================
-# These MUST be set in environment variables on Render
 RAZORPAY_KEY_ID = os.environ.get('RAZORPAY_KEY_ID', '')
 RAZORPAY_KEY_SECRET = os.environ.get('RAZORPAY_KEY_SECRET', '')
 
 # ======================== EMAIL SETTINGS ========================
-# All email credentials from environment variables
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.hostinger.com')
 EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 465))
