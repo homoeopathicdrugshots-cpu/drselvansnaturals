@@ -7,13 +7,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # ======================== SECURITY SETTINGS ========================
 # All secrets come from environment variables - NEVER hardcode passwords!
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-change-this-in-production')
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+
+# TEMPORARILY SET DEBUG = True TO SEE THE ERROR
+DEBUG = True  # Changed from os.environ.get() to True
 
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
     '.onrender.com',
     'drselvansnaturals-3.onrender.com',
+    '*',  # Allow all hosts temporarily for debugging
 ]
 
 # ======================== INSTALLED APPS ========================
