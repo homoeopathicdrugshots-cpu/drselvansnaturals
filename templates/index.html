@@ -1,1026 +1,1469 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Dr Naturals | Ayurvedic Apothecary{% endblock %}
+{% block title %}Dr Selvans Naturals | Ayurvedic Homeopathy Apothecary{% endblock %}
 
 {% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
 <style>
-    body {
-        background:
-            radial-gradient(circle at top left, rgba(76, 120, 64, 0.08), transparent 22%),
-            radial-gradient(circle at top right, rgba(176, 141, 87, 0.10), transparent 24%),
-            linear-gradient(180deg, #fcfbf7 0%, #f7f1e8 48%, #fbfaf7 100%);
-    }
+:root {
+    --sage: #4C7840;
+    --sage-dark: #3A5E30;
+    --sage-light: #6B9E5E;
+    --gold: #B08D57;
+    --gold-light: #D4AD7A;
+    --cream: #FAF7F2;
+    --warm-white: #FFFDF9;
+    --ink: #1A1A18;
+    --ink-soft: #3D3D38;
+    --muted: #8A8878;
+    --border: rgba(76, 120, 64, 0.15);
+}
 
-    .home-decor {
-        position: fixed;
-        inset: 0;
-        pointer-events: none;
-        z-index: 0;
-        overflow: hidden;
-    }
+*, *::before, *::after { box-sizing: border-box; }
 
-    .decor-bubble,
-    .decor-orb {
-        position: absolute;
-        border-radius: 50%;
-        opacity: 0.45;
-        animation-timing-function: ease-in-out;
-        animation-iteration-count: infinite;
-    }
+body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    overflow-x: hidden;
+}
 
-    .decor-bubble {
-        background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.75), rgba(76,120,64,0.12));
-        border: 1px solid rgba(255,255,255,0.45);
-        box-shadow: inset 0 0 14px rgba(255,255,255,0.4);
-        animation-name: floatBubble;
-    }
+.ambient-bg {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background:
+        radial-gradient(ellipse 60% 40% at 10% 20%, rgba(76,120,64,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 35% at 90% 70%, rgba(176,141,87,0.08) 0%, transparent 55%),
+        radial-gradient(ellipse 40% 30% at 50% 50%, rgba(255,255,255,0.5) 0%, transparent 70%);
+}
 
-    .decor-orb {
-        filter: blur(30px);
-        opacity: 0.22;
-        animation-name: floatOrb;
-    }
+.page-wrap {
+    position: relative;
+    z-index: 1;
+}
 
-    .bubble-1 { width: 140px; height: 140px; left: 4%; top: 18%; animation-duration: 14s; }
-    .bubble-2 { width: 90px; height: 90px; right: 8%; top: 28%; animation-duration: 11s; }
-    .bubble-3 { width: 110px; height: 110px; left: 10%; bottom: 18%; animation-duration: 13s; }
-    .bubble-4 { width: 72px; height: 72px; right: 16%; bottom: 24%; animation-duration: 10s; }
-    .bubble-5 { width: 54px; height: 54px; left: 48%; top: 12%; animation-duration: 9s; }
+.hero {
+    margin-top: 60px;
+    position: relative;
+    height: 92vh;
+    min-height: 600px;
+    overflow: hidden;
+}
 
-    .orb-1 { width: 220px; height: 220px; left: -60px; top: 90px; background: rgba(76, 120, 64, 0.18); animation-duration: 16s; }
-    .orb-2 { width: 260px; height: 260px; right: -90px; top: 220px; background: rgba(176, 141, 87, 0.2); animation-duration: 18s; }
-    .orb-3 { width: 220px; height: 220px; right: 12%; bottom: 80px; background: rgba(76, 120, 64, 0.12); animation-duration: 15s; }
+.hero-swiper {
+    width: 100%;
+    height: 100%;
+}
 
-    .home-page-wrap {
-        position: relative;
-        z-index: 1;
-    }
+.hero-slide {
+    position: relative;
+}
 
-    @keyframes floatBubble {
-        0%, 100% { transform: translateY(0) translateX(0) scale(1); }
-        50% { transform: translateY(-18px) translateX(8px) scale(1.04); }
-    }
+.hero-media {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    transition: transform 8s ease;
+}
 
-    @keyframes floatOrb {
-        0%, 100% { transform: translateY(0) translateX(0); }
-        50% { transform: translateY(-24px) translateX(14px); }
-    }
+.swiper-slide-active .hero-media {
+    transform: scale(1.06);
+}
 
-    /* Hero Banner Carousel - NO NAVIGATION ARROWS */
-    .hero-banner-carousel {
-        margin-top: 60px;
-        width: 100%;
-        position: relative;
-        overflow: hidden;
-    }
-    .banner-swiper {
-        width: 100%;
-        height: 85vh;
-        min-height: 550px;
-        border-bottom-left-radius: 42px;
-        border-bottom-right-radius: 42px;
-        overflow: hidden;
-        box-shadow: 0 22px 40px -24px rgba(0,0,0,0.28);
-    }
-    .banner-slide {
-        position: relative;
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-    }
-    .banner-media {
-        position: absolute;
-        inset: 0;
-        background-size: cover;
-        background-position: center;
-        transform: scale(1.02);
-    }
-    .banner-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background:
-            linear-gradient(90deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0) 100%),
-            radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.15));
-    }
-    .banner-content {
-        position: absolute;
-        bottom: 20%;
-        left: 8%;
-        right: auto;
-        text-align: left;
-        color: white;
-        z-index: 2;
-        padding: 2rem;
-        animation: fadeInLeft 0.8s ease;
-        max-width: 550px;
-    }
-    .banner-content h2 {
-        font-size: 3rem;
-        font-weight: 700;
-        margin-bottom: 1rem;
-        text-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
-        font-family: 'Playfair Display', serif;
-        color: white;
-        line-height: 1.2;
-    }
-    .banner-content p {
-        font-size: 1.1rem;
-        margin-bottom: 1.8rem;
-        opacity: 0.95;
-        color: white;
-        text-shadow: 0 1px 5px rgba(0,0,0,0.2);
-        line-height: 1.6;
-    }
-    .banner-btn {
-        display: inline-block;
-        background: #4C7840;
-        color: white;
-        padding: 0.9rem 2.2rem;
-        border-radius: 50px;
-        text-decoration: none;
-        font-weight: 600;
-        transition: all 0.4s ease;
-        border: 2px solid rgba(255, 255, 255, 0.3);
-        font-size: 1rem;
-        letter-spacing: 0.5px;
-        box-shadow: 0 16px 26px -18px rgba(58, 94, 48, 0.75);
-    }
-    .banner-btn:hover {
-        background: #3A5E30;
-        transform: translateY(-3px);
-        box-shadow: 0 15px 35px -10px rgba(58, 94, 48, 0.5);
-    }
-    .banner-swiper .swiper-button-next,
-    .banner-swiper .swiper-button-prev {
-        display: none !important;
-    }
-    .banner-swiper .swiper-pagination {
-        bottom: 30px;
-        text-align: center;
-    }
-    .banner-swiper .swiper-pagination-bullet {
-        background: white;
-        opacity: 0.6;
-        width: 10px;
-        height: 10px;
-    }
-    .banner-swiper .swiper-pagination-bullet-active {
-        background: #4C7840;
-        opacity: 1;
-        width: 25px;
-        border-radius: 10px;
-    }
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg,
+        rgba(10,20,8,0.62) 0%,
+        rgba(10,20,8,0.30) 50%,
+        rgba(10,20,8,0.05) 100%);
+}
 
-    @keyframes fadeInLeft {
-        from {
-            opacity: 0;
-            transform: translateX(-50px);
-        }
-        to {
-            opacity: 1;
-            transform: translateX(0);
-        }
-    }
+.hero-content {
+    position: absolute;
+    bottom: 14%;
+    left: 7%;
+    max-width: 560px;
+    z-index: 2;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease 0.3s, transform 0.8s ease 0.3s;
+}
 
-    /* Most Popular Section */
-    .most-popular-section {
-        max-width: 1400px;
-        margin: 5rem auto;
-        padding: 0 2rem;
-    }
-    .section-header {
-        text-align: center;
-        margin-bottom: 3rem;
-    }
-    .section-subtitle {
-        font-size: 0.8rem;
-        letter-spacing: 4px;
-        text-transform: uppercase;
-        color: #4C7840;
-        margin-bottom: 0.5rem;
-    }
-    .section-title {
-        font-size: 2.5rem;
-        color: #000000;
-        font-family: 'Playfair Display', serif;
-    }
-    .popular-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 2rem;
-    }
-    .popular-card {
-        background: rgba(255,255,255,0.92);
-        border-radius: 28px;
-        overflow: hidden;
-        transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-        cursor: pointer;
-        border: 1px solid rgba(76, 120, 64, 0.1);
-        position: relative;
-        backdrop-filter: blur(8px);
-        box-shadow: 0 20px 36px -30px rgba(0,0,0,0.28);
-    }
-    .popular-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 25px 45px -15px rgba(76, 120, 64, 0.25);
-        border-color: #4C7840;
-    }
-    .popular-img-wrapper {
-        height: 260px;
-        overflow: hidden;
-        position: relative;
-    }
-    .popular-img {
-        width: 100%;
-        height: 100%;
-        background-size: cover;
-        background-position: center;
-        transition: transform 0.6s;
-    }
-    .popular-card:hover .popular-img {
-        transform: scale(1.08);
-    }
-    .popular-info {
-        padding: 1.2rem;
-    }
-    .popular-info h3 {
-        font-size: 1rem;
-        color: #000000;
-        margin-bottom: 0.3rem;
-        font-weight: 600;
-    }
-    .popular-category {
-        font-size: 0.7rem;
-        color: #4C7840;
-        margin-bottom: 0.5rem;
-    }
-    .popular-price {
-        font-weight: 700;
-        color: #000000;
-        font-size: 1.1rem;
-        margin-bottom: 0.8rem;
-    }
-    .button-group {
-        display: flex;
-        gap: 0.8rem;
-        align-items: center;
-    }
-    .popular-btn {
-        flex: 1;
-        background: #4C7840;
-        color: white;
-        border: none;
-        padding: 0.6rem;
-        border-radius: 40px;
-        cursor: pointer;
-        font-weight: 500;
-        transition: 0.3s;
-        text-align: center;
-    }
-    .popular-btn:hover {
-        background: #3A5E30;
-        transform: translateY(-2px);
-    }
-    .buy-now-btn {
-        flex: 1;
-        background: transparent;
-        border: 2px solid #4C7840;
-        color: #4C7840;
-        padding: 0.6rem;
-        border-radius: 40px;
-        cursor: pointer;
-        font-weight: 500;
-        transition: 0.3s;
-        text-align: center;
-    }
-    .buy-now-btn:hover {
-        background: #4C7840;
-        color: white;
-        transform: translateY(-2px);
-    }
+.swiper-slide-active .hero-content {
+    opacity: 1;
+    transform: translateY(0);
+}
 
-    /* Categories Section */
-    .categories-section {
-        background: linear-gradient(180deg, rgba(255,255,255,0.45) 0%, rgba(245,240,232,0.92) 100%);
-        padding: 5rem 2rem;
-        position: relative;
-        overflow: hidden;
-    }
-    .categories-section::before {
-        content: '';
-        position: absolute;
-        width: 240px;
-        height: 240px;
-        border-radius: 50%;
-        background: rgba(76, 120, 64, 0.06);
-        top: -70px;
-        right: 8%;
-        filter: blur(18px);
-    }
-    .category-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 2rem;
-        max-width: 1200px;
-        margin: 0 auto;
-        position: relative;
-        z-index: 1;
-    }
-    .category-card {
-        background: white;
-        border-radius: 32px;
-        overflow: hidden;
-        transition: all 0.4s;
-        cursor: pointer;
-        border: 1px solid rgba(76, 120, 64, 0.15);
-        position: relative;
-        text-decoration: none;
-        display: block;
-        box-shadow: 0 20px 34px -26px rgba(0,0,0,0.22);
-    }
-    .category-card:hover {
-        transform: translateY(-12px);
-        box-shadow: 0 25px 40px -12px rgba(76, 120, 64, 0.2);
-        border-color: #4C7840;
-    }
-    .category-img {
-        height: 240px;
-        background-size: cover;
-        background-position: center;
-        transition: transform 0.5s;
-    }
-    .category-card:hover .category-img {
-        transform: scale(1.05);
-    }
-    .category-overlay {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
-        padding: 2rem 1.5rem 1.5rem;
-        color: white;
-    }
-    .category-overlay h3 {
-        font-size: 1.6rem;
-        margin-bottom: 0.3rem;
-        color: white;
-    }
-    .category-overlay p {
-        font-size: 0.85rem;
-        opacity: 0.9;
-        color: white;
-    }
+.hero-eyebrow {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
 
-    /* Featured Products Section */
-    .featured-section {
-        max-width: 1400px;
-        margin: 5rem auto;
-        padding: 0 2rem;
-    }
-    .featured-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-        gap: 2rem;
-    }
-    .featured-card {
-        background: rgba(255,255,255,0.92);
-        border-radius: 28px;
-        overflow: hidden;
-        transition: all 0.4s;
-        cursor: pointer;
-        border: 1px solid rgba(76, 120, 64, 0.1);
-        backdrop-filter: blur(8px);
-        box-shadow: 0 20px 36px -28px rgba(0,0,0,0.26);
-    }
-    .featured-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 20px 40px -12px rgba(76, 120, 64, 0.2);
-        border-color: #4C7840;
-    }
-    .featured-img-wrapper {
-        height: 260px;
-        overflow: hidden;
-        position: relative;
-        background: #E8F0E4;
-    }
-    .featured-img {
-        width: 100%;
-        height: 100%;
-        background-size: cover;
-        background-position: center;
-        transition: transform 0.6s;
-    }
-    .featured-card:hover .featured-img {
-        transform: scale(1.05);
-    }
-    .featured-badge {
-        position: absolute;
-        top: 1rem;
-        left: 1rem;
-        background: rgba(76, 120, 64, 0.9);
-        padding: 0.3rem 0.8rem;
-        border-radius: 30px;
-        font-size: 0.7rem;
-        color: white;
-        box-shadow: 0 10px 18px -12px rgba(76,120,64,0.6);
-    }
-    .featured-info {
-        padding: 1.2rem;
-    }
-    .featured-info h3 {
-        font-size: 1rem;
-        color: #000000;
-        margin-bottom: 0.5rem;
-        font-weight: 600;
-    }
-    .featured-desc {
-        font-size: 0.8rem;
-        color: #4A4A4A;
-        line-height: 1.4;
-        margin-bottom: 0.5rem;
-    }
-    .featured-price-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 0.8rem;
-        gap: 1rem;
-    }
-    .featured-price {
-        font-weight: 700;
-        color: #000000;
-        font-size: 1.1rem;
-    }
-    .featured-btn {
-        background: #4C7840;
-        color: white;
-        border: none;
-        border-radius: 40px;
-        padding: 0.4rem 1rem;
-        cursor: pointer;
-        font-size: 0.75rem;
-        transition: 0.3s;
-    }
-    .featured-btn:hover {
-        background: #3A5E30;
-        transform: scale(1.05);
-    }
-    .featured-buy-btn {
-        background: transparent;
-        border: 1.5px solid #4C7840;
-        color: #4C7840;
-        border-radius: 40px;
-        padding: 0.4rem 1rem;
-        cursor: pointer;
-        font-size: 0.75rem;
-        transition: 0.3s;
-    }
-    .featured-buy-btn:hover {
-        background: #4C7840;
-        color: white;
-    }
-    .button-group-featured {
-        display: flex;
-        gap: 0.5rem;
-        align-items: center;
-    }
+.hero-eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 32px;
+    height: 1px;
+    background: var(--gold-light);
+}
 
-    /* About Homeopathy Section */
-    .about-section {
-        max-width: 1400px;
-        margin: 5rem auto;
-        padding: 0 2rem;
-    }
-    
-    .about-bordered-wrapper {
-        border: 3px solid rgba(76, 120, 64, 0.28);
-        border-radius: 48px;
-        padding: 2.5rem;
-        background: rgba(255,255,255,0.92);
-        transition: all 0.3s ease;
-        box-shadow: 0 15px 35px -12px rgba(0,0,0,0.05);
-        backdrop-filter: blur(8px);
-    }
-    
-    .about-bordered-wrapper:hover {
-        border-color: #4C7840;
-        box-shadow: 0 0 30px rgba(76, 120, 64, 0.12);
-    }
-    
-    .about-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 3rem;
-        align-items: center;
-    }
-    
-    .about-content h2 {
-        font-size: 2rem;
-        color: #000000;
-        margin-bottom: 1rem;
-    }
-    
-    .about-content p {
-        color: #4A4A4A;
-        line-height: 1.8;
-        margin-bottom: 1rem;
-    }
-    
-    .about-features {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
-        margin-top: 1.5rem;
-    }
-    
-    .feature-item {
-        display: flex;
-        align-items: center;
-        gap: 0.8rem;
-        padding: 0.8rem;
-        background: #F5F0E8;
-        border-radius: 16px;
-        transition: all 0.3s;
-        box-shadow: 0 12px 22px -20px rgba(0,0,0,0.2);
-    }
-    
-    .feature-item:hover {
-        transform: translateX(5px);
-        background: #E8F0E4;
-    }
-    
-    .feature-item i {
-        font-size: 1.5rem;
-        color: #4C7840;
-    }
-    
-    .feature-item span {
-        font-weight: 500;
-        color: #000000;
-    }
-    
-    .about-image-slider {
-        position: relative;
-        border-radius: 32px;
-        overflow: hidden;
-        box-shadow: 0 20px 40px -12px rgba(0,0,0,0.1);
-        aspect-ratio: 4 / 3;
-        cursor: grab;
-    }
-    
-    .about-image-slider:active {
-        cursor: grabbing;
-    }
-    
-    .slide-image {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-        transition: transform 0.5s;
-    }
-    
-    .about-image-slider:hover .slide-image {
-        transform: scale(1.02);
-    }
-    
-    .about-swiper .swiper-button-next,
-    .about-swiper .swiper-button-prev {
-        display: none !important;
-    }
-    
-    .about-swiper .swiper-pagination-bullet {
-        background: #4C7840;
-        opacity: 0.4;
-    }
-    
-    .about-swiper .swiper-pagination-bullet-active {
-        background: #4C7840;
-        opacity: 1;
-    }
+.hero-content h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.6rem, 5vw, 4.2rem);
+    font-weight: 300;
+    line-height: 1.1;
+    color: #fff;
+    margin-bottom: 1.2rem;
+    letter-spacing: -0.5px;
+}
 
-    .scroll-reveal {
-        opacity: 0;
-        transform: translateY(40px);
-        transition: all 0.8s ease;
-    }
-    .scroll-reveal.revealed {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.hero-content h1 em {
+    font-style: italic;
+    color: #D4E9CC;
+}
 
-    .custom-toast {
-        position: fixed;
-        bottom: 30px;
-        right: 30px;
-        background: #4C7840;
-        color: white;
-        padding: 12px 24px;
-        border-radius: 50px;
-        font-weight: 500;
-        z-index: 9999;
-        opacity: 0;
-        transform: translateX(100%);
-        transition: all 0.3s ease;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-size: 14px;
-    }
-    .custom-toast.show {
-        opacity: 1;
-        transform: translateX(0);
-    }
-    .custom-toast i {
-        font-size: 18px;
-    }
+.hero-content p {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.82);
+    margin-bottom: 2rem;
+    font-weight: 300;
+}
 
-    @media (max-width: 768px) {
-        .banner-content h2 { font-size: 2rem; }
-        .banner-content { left: 5%; bottom: 15%; }
-        .banner-swiper { height: 60vh; min-height: 450px; border-bottom-left-radius: 28px; border-bottom-right-radius: 28px; }
-        .category-grid { grid-template-columns: 1fr; gap: 1.5rem; }
-        .popular-grid, .featured-grid { grid-template-columns: 1fr; }
-        .section-title { font-size: 1.8rem; }
-        .about-grid { grid-template-columns: 1fr; }
-        .about-features { grid-template-columns: 1fr; }
-        .about-bordered-wrapper { padding: 1.5rem; }
-        .button-group { flex-direction: column; width: 100%; }
-        .popular-btn, .buy-now-btn { width: 100%; }
-        .custom-toast { bottom: 20px; right: 20px; left: 20px; text-align: center; justify-content: center; }
-        .button-group-featured { flex-direction: column; width: 100%; }
-        .featured-btn, .featured-buy-btn { width: 100%; text-align: center; }
-    }
+.hero-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    background: var(--sage);
+    color: white;
+    padding: 0.85rem 2rem;
+    border-radius: 50px;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    border: 1.5px solid rgba(255,255,255,0.2);
+    transition: all 0.35s ease;
+}
+
+.hero-btn:hover {
+    background: var(--sage-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 20px 40px -12px rgba(58,94,48,0.55);
+    gap: 1.2rem;
+}
+
+.hero-btn-arrow {
+    font-size: 1.1rem;
+    transition: transform 0.3s ease;
+}
+
+.hero-btn:hover .hero-btn-arrow { transform: translateX(4px); }
+
+.hero-swiper .swiper-button-next,
+.hero-swiper .swiper-button-prev { display: none !important; }
+
+.hero-swiper .swiper-pagination {
+    bottom: 2.5rem;
+    left: 7%;
+    width: auto;
+    text-align: left;
+}
+
+.hero-swiper .swiper-pagination-bullet {
+    width: 28px;
+    height: 3px;
+    border-radius: 2px;
+    background: rgba(255,255,255,0.4);
+    opacity: 1;
+    transition: all 0.4s;
+}
+
+.hero-swiper .swiper-pagination-bullet-active {
+    background: var(--gold-light);
+    width: 50px;
+}
+
+.scroll-hint {
+    position: absolute;
+    bottom: 2.5rem;
+    right: 7%;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: rgba(255,255,255,0.6);
+    font-size: 0.72rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    z-index: 3;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+}
+
+.scroll-line {
+    width: 1px;
+    height: 42px;
+    background: rgba(255,255,255,0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.scroll-line::after {
+    content: '';
+    position: absolute;
+    top: -100%;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--gold-light);
+    animation: scrollDown 2s ease infinite;
+}
+
+@keyframes scrollDown {
+    0% { top: -100%; }
+    100% { top: 100%; }
+}
+
+.trust-bar {
+    background: var(--ink);
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3rem;
+    flex-wrap: wrap;
+    overflow: hidden;
+}
+
+.trust-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: rgba(255,255,255,0.75);
+    font-size: 0.78rem;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.trust-icon {
+    width: 18px;
+    height: 18px;
+    color: var(--gold-light);
+    flex-shrink: 0;
+}
+
+.trust-divider {
+    width: 1px;
+    height: 14px;
+    background: rgba(255,255,255,0.2);
+}
+
+.section {
+    max-width: 1360px;
+    margin: 0 auto;
+    padding: 6rem 2rem;
+}
+
+.section-label {
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: var(--sage);
+    margin-bottom: 0.6rem;
+}
+
+.section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    font-weight: 400;
+    color: var(--ink);
+    line-height: 1.15;
+    letter-spacing: -0.3px;
+}
+
+.section-title em {
+    font-style: italic;
+    color: var(--sage);
+}
+
+.section-head {
+    text-align: center;
+    margin-bottom: 3.5rem;
+}
+
+.popular-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 1.8rem;
+}
+
+.product-card {
+    background: var(--warm-white);
+    border-radius: 24px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    transition: all 0.4s cubic-bezier(0.2, 0.8, 0.3, 1);
+    cursor: pointer;
+    position: relative;
+}
+
+.product-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(76,120,64,0.35);
+    box-shadow: 0 30px 60px -20px rgba(76,120,64,0.22);
+}
+
+.product-img-wrap {
+    height: 260px;
+    overflow: hidden;
+    position: relative;
+    background: #EFF5EB;
+}
+
+.product-img {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    transition: transform 0.7s ease;
+}
+
+.product-card:hover .product-img { transform: scale(1.07); }
+
+.product-badge {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    background: var(--ink);
+    color: rgba(255,255,255,0.9);
+    font-size: 0.62rem;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 0.3rem 0.8rem;
+    border-radius: 30px;
+}
+
+.product-badge.gold { background: var(--gold); }
+
+.product-info {
+    padding: 1.4rem;
+}
+
+.product-cat {
+    font-size: 0.68rem;
+    color: var(--sage);
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+}
+
+.product-name {
+    font-size: 0.98rem;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 0.3rem;
+    line-height: 1.3;
+}
+
+.product-desc {
+    font-size: 0.78rem;
+    color: var(--muted);
+    line-height: 1.5;
+    margin-bottom: 1rem;
+}
+
+.product-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+}
+
+/* Clean price styling */
+.product-price {
+    font-weight: 500;
+    color: var(--ink);
+    font-size: 1.1rem;
+    letter-spacing: normal;
+    font-family: 'DM Sans', sans-serif;
+}
+
+.btn-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-cart {
+    background: var(--sage);
+    color: white;
+    border: none;
+    padding: 0.55rem 1rem;
+    border-radius: 40px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'DM Sans', sans-serif;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.btn-cart:hover {
+    background: var(--sage-dark);
+    transform: translateY(-1px);
+}
+
+.btn-buy {
+    background: transparent;
+    color: var(--sage);
+    border: 1.5px solid var(--sage);
+    padding: 0.55rem 1rem;
+    border-radius: 40px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'DM Sans', sans-serif;
+    white-space: nowrap;
+}
+
+.btn-buy:hover {
+    background: var(--sage);
+    color: white;
+}
+
+.ingredients-section {
+    background: var(--ink);
+    padding: 6rem 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.ingredients-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(ellipse 50% 60% at 0% 50%, rgba(76,120,64,0.15) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 50% at 100% 50%, rgba(176,141,87,0.12) 0%, transparent 60%);
+    pointer-events: none;
+}
+
+.ingredients-inner {
+    max-width: 1360px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+.ingredients-inner .section-title { color: var(--warm-white); }
+.ingredients-inner .section-label { color: var(--gold-light); }
+
+.ingredients-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-top: 3rem;
+}
+
+.ingredient-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 1.8rem 1.4rem;
+    text-align: center;
+    transition: all 0.35s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.ingredient-card:hover {
+    background: rgba(76,120,64,0.15);
+    border-color: rgba(76,120,64,0.5);
+    transform: translateY(-5px);
+}
+
+.ingredient-icon {
+    font-size: 2.8rem;
+    margin-bottom: 1rem;
+    display: block;
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
+}
+
+.ingredient-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    font-weight: 400;
+    color: var(--warm-white);
+    margin-bottom: 0.4rem;
+}
+
+.ingredient-benefit {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.55);
+    line-height: 1.5;
+}
+
+.ingredient-tag {
+    margin-top: 1rem;
+    display: inline-block;
+    font-size: 0.6rem;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 0.25rem 0.8rem;
+    border-radius: 20px;
+    background: rgba(76,120,64,0.3);
+    color: #8FCA7E;
+}
+
+.categories-outer {
+    background: linear-gradient(180deg, #F2ECE3 0%, var(--cream) 100%);
+    padding: 6rem 2rem;
+}
+
+.cat-grid {
+    max-width: 1360px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.cat-card {
+    border-radius: 28px;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    text-decoration: none;
+    display: block;
+    transition: all 0.4s ease;
+}
+
+.cat-card:hover { transform: translateY(-8px); }
+.cat-card:hover .cat-img { transform: scale(1.06); }
+
+.cat-card.tall { height: 520px; }
+.cat-card.short { height: 380px; }
+
+.cat-img {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    transition: transform 0.7s ease;
+}
+
+.cat-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(15,30,10,0.78) 0%, rgba(15,30,10,0.1) 50%, transparent 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 2rem;
+}
+
+.cat-eyebrow {
+    font-size: 0.65rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.cat-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    font-weight: 400;
+    color: white;
+    line-height: 1.1;
+    margin-bottom: 0.5rem;
+}
+
+.cat-sub {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.7);
+    font-weight: 300;
+    margin-bottom: 1.2rem;
+}
+
+.cat-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: white;
+    border-bottom: 1px solid rgba(255,255,255,0.4);
+    padding-bottom: 2px;
+    transition: gap 0.3s;
+}
+
+.cat-card:hover .cat-link { gap: 0.9rem; border-color: white; }
+
+.cat-right { display: flex; flex-direction: column; gap: 1.5rem; }
+.cat-card.short { height: 100%; min-height: 220px; }
+
+.why-section {
+    padding: 6rem 2rem;
+}
+
+.why-inner {
+    max-width: 1360px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: center;
+}
+
+.why-visual {
+    position: relative;
+}
+
+.why-main-img {
+    border-radius: 32px;
+    width: 100%;
+    aspect-ratio: 4/5;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+    box-shadow: 0 40px 80px -20px rgba(0,0,0,0.15);
+}
+
+.why-float-card {
+    position: absolute;
+    bottom: -2rem;
+    right: -2rem;
+    background: white;
+    border-radius: 20px;
+    padding: 1.4rem 1.8rem;
+    z-index: 2;
+    border: 1px solid var(--border);
+    box-shadow: 0 20px 40px -10px rgba(0,0,0,0.12);
+    min-width: 200px;
+}
+
+.float-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3rem;
+    font-weight: 600;
+    color: var(--sage);
+    line-height: 1;
+}
+
+.float-label {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-top: 0.2rem;
+}
+
+.why-content .section-title { text-align: left; margin-bottom: 1.5rem; }
+.why-content .section-label { text-align: left; }
+
+.why-content p {
+    color: var(--ink-soft);
+    line-height: 1.8;
+    font-size: 0.95rem;
+    font-weight: 300;
+    margin-bottom: 1rem;
+}
+
+.pillars {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.pillar {
+    background: var(--cream);
+    border-radius: 16px;
+    padding: 1.2rem;
+    border: 1px solid var(--border);
+    transition: all 0.3s;
+}
+
+.pillar:hover {
+    background: #E8F0E4;
+    border-color: rgba(76,120,64,0.35);
+    transform: translateX(5px);
+}
+
+.pillar-icon {
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.pillar-name {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--ink);
+}
+
+.pillar-sub {
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-top: 0.2rem;
+}
+
+.featured-outer {
+    background: linear-gradient(0deg, #F2ECE3 0%, var(--cream) 100%);
+    padding: 6rem 2rem;
+}
+
+.featured-grid {
+    max-width: 1360px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.8rem;
+}
+
+.science-section {
+    padding: 6rem 2rem;
+    max-width: 1360px;
+    margin: 0 auto;
+}
+
+.science-wrap {
+    background: white;
+    border: 1.5px solid rgba(76,120,64,0.2);
+    border-radius: 40px;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.science-left {
+    padding: 4rem;
+}
+
+.science-left .section-label { text-align: left; }
+.science-left .section-title { text-align: left; margin-bottom: 1.5rem; }
+
+.science-left p {
+    color: var(--ink-soft);
+    line-height: 1.8;
+    font-size: 0.92rem;
+    font-weight: 300;
+    margin-bottom: 1rem;
+}
+
+.pillars-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+    margin-top: 2rem;
+}
+
+.pillar2 {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.9rem 1rem;
+    background: #F5F1EA;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--ink);
+    transition: all 0.3s;
+}
+
+.pillar2:hover {
+    background: #E4EFDE;
+    border-color: rgba(76,120,64,0.4);
+    transform: translateX(4px);
+}
+
+.pillar2-icon { font-size: 1.2rem; flex-shrink: 0; }
+
+.science-right {
+    position: relative;
+    overflow: hidden;
+    min-height: 480px;
+}
+
+.science-swiper { width: 100%; height: 100%; }
+
+.sci-slide { position: relative; }
+
+.sci-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.science-right .swiper-pagination {
+    bottom: 1.5rem;
+}
+
+.science-right .swiper-pagination-bullet {
+    background: rgba(255,255,255,0.6);
+    width: 8px; height: 8px;
+}
+
+.science-right .swiper-pagination-bullet-active {
+    background: white;
+}
+
+.testimonials-section {
+    padding: 6rem 2rem;
+    background: var(--ink);
+    position: relative;
+    overflow: hidden;
+}
+
+.testimonials-section::before {
+    content: '';
+    position: absolute;
+    width: 500px; height: 500px;
+    border-radius: 50%;
+    background: rgba(76,120,64,0.08);
+    top: -200px; right: -100px;
+    filter: blur(80px);
+    pointer-events: none;
+}
+
+.test-inner {
+    max-width: 1360px;
+    margin: 0 auto;
+}
+
+.test-inner .section-title { color: var(--warm-white); }
+.test-inner .section-label { color: var(--gold-light); }
+.test-inner .section-head { margin-bottom: 3rem; }
+
+.testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.test-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 24px;
+    padding: 2rem;
+    transition: all 0.35s;
+}
+
+.test-card:hover {
+    background: rgba(76,120,64,0.1);
+    border-color: rgba(76,120,64,0.4);
+    transform: translateY(-4px);
+}
+
+.test-stars {
+    color: var(--gold-light);
+    font-size: 0.85rem;
+    letter-spacing: 2px;
+    margin-bottom: 1rem;
+}
+
+.test-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-style: italic;
+    color: rgba(255,255,255,0.85);
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+    font-weight: 300;
+}
+
+.test-author {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.test-avatar {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: var(--sage);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: white;
+    flex-shrink: 0;
+}
+
+.test-name {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: rgba(255,255,255,0.9);
+}
+
+.test-loc {
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.45);
+}
+
+.custom-toast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: var(--sage);
+    color: white;
+    padding: 0.9rem 1.6rem;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    z-index: 9999;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.35s ease;
+    box-shadow: 0 12px 30px -8px rgba(76,120,64,0.45);
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+}
+
+.custom-toast.show { opacity: 1; transform: translateY(0); }
+
+.reveal {
+    opacity: 0;
+    transform: translateY(36px);
+    transition: all 0.75s cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+
+.reveal.revealed { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 1024px) {
+    .cat-grid { grid-template-columns: 1fr 1fr; }
+    .cat-card.tall { height: 420px; }
+    .cat-right { flex-direction: row; }
+    .cat-right .cat-card { height: 200px; }
+    .why-inner { grid-template-columns: 1fr; gap: 3rem; }
+    .why-float-card { right: 1rem; bottom: 1rem; }
+    .science-wrap { grid-template-columns: 1fr; }
+    .science-right { min-height: 350px; }
+}
+
+@media (max-width: 768px) {
+    .hero { height: 85vh; }
+    .hero-content { left: 5%; right: 5%; max-width: none; }
+    .hero-content h1 { font-size: 2.2rem; }
+    .trust-bar { gap: 1rem; padding: 1rem; }
+    .trust-divider { display: none; }
+    .cat-grid { grid-template-columns: 1fr; }
+    .cat-card.tall, .cat-card.short { height: 280px; }
+    .cat-right { flex-direction: column; }
+    .pillars, .pillars-2 { grid-template-columns: 1fr; }
+    .science-left { padding: 2rem; }
+    .popular-grid, .featured-grid { grid-template-columns: 1fr; }
+    .ingredients-grid { grid-template-columns: repeat(2, 1fr); }
+    .testimonials-grid { grid-template-columns: 1fr; }
+    .scroll-hint { display: none; }
+    .custom-toast { left: 1rem; right: 1rem; justify-content: center; }
+}
 </style>
 
-<div class="home-decor">
-    <span class="decor-orb orb-1"></span>
-    <span class="decor-orb orb-2"></span>
-    <span class="decor-orb orb-3"></span>
-    <span class="decor-bubble bubble-1"></span>
-    <span class="decor-bubble bubble-2"></span>
-    <span class="decor-bubble bubble-3"></span>
-    <span class="decor-bubble bubble-4"></span>
-    <span class="decor-bubble bubble-5"></span>
-</div>
+<div class="ambient-bg"></div>
 
-<div class="home-page-wrap">
-<!-- Hero Banner Carousel - 3 BEAUTIFUL IMAGES -->
-<div class="hero-banner-carousel">
-  <div class="swiper banner-swiper">
+<div class="page-wrap">
+
+<section class="hero">
+  <div class="swiper hero-swiper">
     <div class="swiper-wrapper">
 
-      <div class="swiper-slide banner-slide">
-        <div class="banner-media" style="background-image:url('{% static 'images/hero_bann1.jpg' %}');"></div>
-        <div class="banner-overlay"></div>
-        <div class="banner-content">
-          <h2>Pure. Potent. Natural.</h2>
-          <p>Ancient formulations, modern science for your wellness journey.</p>
-          <a href="#featured" class="banner-btn">Discover Collection →</a>
+      <div class="swiper-slide hero-slide">
+        <div class="hero-media" style="background-image:url('{% static 'images/hero_bann1.jpg' %}');"></div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+          <div class="hero-eyebrow">Ayurvedic Homeopathy</div>
+          <h1>Pure. Potent.<br><em>Naturally Yours.</em></h1>
+          <p>Ancient formulations perfected over centuries, brought to you with modern science and zero compromise.</p>
+          <a href="#featured" class="hero-btn">Discover Collection <span class="hero-btn-arrow">→</span></a>
         </div>
       </div>
 
-      <div class="swiper-slide banner-slide">
-       <div class="banner-media" style="background-image:url('{% static 'images/ayurvedicimg2.jpg' %}');"></div>
-        <div class="banner-overlay"></div>
-        <div class="banner-content">
-          <h2>Holistic Healing</h2>
-          <p>Homeopathy meets Ayurveda, gentle, effective care.</p>
-          <a href="{% url 'medicines' %}" class="banner-btn">Shop Medicines →</a>
+      <div class="swiper-slide hero-slide">
+        <div class="hero-media" style="background-image:url('{% static 'images/ayurvedicimg2.jpg' %}');"></div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+          <div class="hero-eyebrow">Homeopathic Wellness</div>
+          <h1>Holistic <em>Healing,</em><br>Gentle Care.</h1>
+          <p>Where homeopathy meets Ayurveda — safe, effective remedies for every member of your family.</p>
+          <a href="{% url 'medicines' %}" class="hero-btn">Shop Medicines <span class="hero-btn-arrow">→</span></a>
         </div>
       </div>
 
-      <div class="swiper-slide banner-slide">
-       <div class="banner-media" style="background-image:url('{% static 'images/haircare2banner.jpg' %}');"></div>
-        <div class="banner-overlay"></div>
-        <div class="banner-content">
-          <h2>Ayurvedic Wisdom</h2>
-          <p>Rooted in tradition, backed by science.</p>
-          <a href="{% url 'haircare' %}" class="banner-btn">Explore Haircare →</a>
+      <div class="swiper-slide hero-slide">
+        <div class="hero-media" style="background-image:url('{% static 'images/haircare2banner.jpg' %}');"></div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+          <div class="hero-eyebrow">Haircare Collection</div>
+          <h1>Rooted in <em>Tradition,</em><br>Backed by Science.</h1>
+          <p>From Bhringraj to Amla — revive your hair's natural strength with time-tested Ayurvedic wisdom.</p>
+          <a href="{% url 'haircare' %}" class="hero-btn">Explore Haircare <span class="hero-btn-arrow">→</span></a>
         </div>
       </div>
 
     </div>
     <div class="swiper-pagination"></div>
   </div>
-</div>
+  <div class="scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
 
+<div class="trust-bar">
+  <div class="trust-item">
+    <svg class="trust-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+    100% Natural Ingredients
+  </div>
+  <div class="trust-divider"></div>
+  <div class="trust-item">
+    <svg class="trust-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+    Pan India Delivery
+  </div>
+  <div class="trust-divider"></div>
+  <div class="trust-item">
+    <svg class="trust-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+    No Side Effects
+  </div>
+  <div class="trust-divider"></div>
+  <div class="trust-item">
+    <svg class="trust-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+    AYUSH Certified
+  </div>
+  <div class="trust-divider"></div>
+  <div class="trust-item">
+    <svg class="trust-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+    200+ Year Old Formulas
+  </div>
+</div>
 
 {% if most_popular %}
-<div class="most-popular-section">
-    <div class="section-header scroll-reveal">
-        <div class="section-subtitle">⭐ MOST POPULAR</div>
-        <h2 class="section-title">Customer Favorites</h2>
-    </div>
-    <div class="popular-grid">
-        {% for product in most_popular %}
-        <div class="popular-card" data-product-slug="{{ product.slug }}">
-            <div class="popular-img-wrapper">
-                {% if product.image %}
-                <div class="popular-img" style="background-image: url('{{ product.image.url }}');"></div>
-                {% else %}
-                <div class="popular-img" style="background-image: url('https://placehold.co/500x500/E8F0E4/4C7840?text={{ product.name|slice:":15" }}');"></div>
-                {% endif %}
-            </div>
-            <div class="popular-info">
-                <h3>{{ product.name }}</h3>
-                <div class="popular-category">{{ product.get_category_display }}</div>
-                <div class="popular-price">₹{{ product.price }}</div>
-                <div class="button-group">
-                    <button class="popular-btn add-to-cart-btn" data-product-id="{{ product.id }}" data-product-name="{{ product.name }}"><i class="fas fa-shopping-bag"></i> Add to Cart</button>
-                    <button class="buy-now-btn" data-product-id="{{ product.id }}"><i class="fas fa-bolt"></i> Buy Now</button>
-                </div>
-            </div>
+<section class="section">
+  <div class="section-head reveal">
+    <div class="section-label">⭐ Customer Favourites</div>
+    <h2 class="section-title">Most <em>Popular</em></h2>
+  </div>
+  <div class="popular-grid">
+    {% for product in most_popular %}
+    <div class="product-card reveal" data-product-slug="{{ product.slug }}">
+      <div class="product-img-wrap">
+        {% if product.image %}
+        <div class="product-img" style="background-image:url('{{ product.image.url }}');"></div>
+        {% else %}
+        <div class="product-img" style="background-image:url('https://placehold.co/500x500/EFF5EB/4C7840?text={{ product.name|slice:":12" }}');"></div>
+        {% endif %}
+        <span class="product-badge gold">Popular</span>
+      </div>
+      <div class="product-info">
+        <div class="product-cat">{{ product.get_category_display }}</div>
+        <div class="product-name">{{ product.name }}</div>
+        <div class="product-desc">{{ product.short_desc|default:product.description|slice:":60" }}...</div>
+        <div class="product-footer">
+          <div class="product-price">₹{{ product.price }}</div>
+          <div class="btn-group">
+            <button class="btn-cart add-to-cart-btn" data-product-id="{{ product.id }}" data-product-name="{{ product.name }}">
+              <i class="fas fa-bag-shopping"></i> Add
+            </button>
+            <button class="btn-buy buy-now-btn" data-product-id="{{ product.id }}">Buy Now</button>
+          </div>
         </div>
-        {% endfor %}
+      </div>
     </div>
-</div>
+    {% endfor %}
+  </div>
+</section>
 {% endif %}
 
-<div class="categories-section">
-    <div class="section-header scroll-reveal">
-        <div class="section-subtitle">SHOP BY NEED</div>
-        <h2 class="section-title">Choose Your Wellness Path</h2>
+<section class="ingredients-section">
+  <div class="ingredients-inner">
+    <div class="section-head reveal" style="text-align:left;">
+      <div class="section-label">Nature's Pharmacy</div>
+      <h2 class="section-title">Key <em>Ingredients</em></h2>
     </div>
-    <div class="category-grid">
-        <a href="{% url 'haircare' %}" class="category-card scroll-reveal">
-            <div class="category-img" style="background-image: url('{% static 'images/hairaest.jpg' %}');"></div>
-            <div class="category-overlay">
-                <h3>Haircare</h3>
-                <p>Strength elixirs & scalp tonics</p>
-            </div>
-        </a>
-        <a href="{% url 'skincare' %}" class="category-card scroll-reveal">
-            <div class="category-img" style="background-image: url('{% static 'images/skincareesdp.jpg' %}');"></div>
-            <div class="category-overlay">
-                <h3>Skincare</h3>
-                <p>Radiance serums & velvety butters</p>
-            </div>
-        </a>
-        <a href="{% url 'medicines' %}" class="category-card scroll-reveal">
-            <div class="category-img" style="background-image: url('{% static 'images/ayurvedicimg2.jpg' %}');"></div>
-            <div class="category-overlay">
-                <h3>Medicines</h3>
-                <p>Homeopathy & herbal remedies</p>
-            </div>
-        </a>
+    <div class="ingredients-grid">
+      <div class="ingredient-card reveal">
+        <span class="ingredient-icon">🌿</span>
+        <div class="ingredient-name">Ashwagandha</div>
+        <div class="ingredient-benefit">Reduces stress, boosts immunity & vitality</div>
+        <span class="ingredient-tag">Adaptogen</span>
+      </div>
+      <div class="ingredient-card reveal">
+        <span class="ingredient-icon">🍃</span>
+        <div class="ingredient-name">Bhringraj</div>
+        <div class="ingredient-benefit">Stimulates hair growth, prevents premature greying</div>
+        <span class="ingredient-tag">Haircare</span>
+      </div>
+      <div class="ingredient-card reveal">
+        <span class="ingredient-icon">🌼</span>
+        <div class="ingredient-name">Calendula</div>
+        <div class="ingredient-benefit">Soothes skin, anti-inflammatory healing</div>
+        <span class="ingredient-tag">Skincare</span>
+      </div>
+      <div class="ingredient-card reveal">
+        <span class="ingredient-icon">🌿</span>
+        <div class="ingredient-name">Neem</div>
+        <div class="ingredient-benefit">Purifying, anti-bacterial, deep skin detox</div>
+        <span class="ingredient-tag">Purifying</span>
+      </div>
+      <div class="ingredient-card reveal">
+        <span class="ingredient-icon">🍵</span>
+        <div class="ingredient-name">Tulsi</div>
+        <div class="ingredient-benefit">Respiratory health, immunity support & clarity</div>
+        <span class="ingredient-tag">Wellness</span>
+      </div>
+      <div class="ingredient-card reveal">
+        <span class="ingredient-icon">🌱</span>
+        <div class="ingredient-name">Amla</div>
+        <div class="ingredient-benefit">Vitamin C powerhouse, strengthens hair & skin</div>
+        <span class="ingredient-tag">Rejuvenating</span>
+      </div>
     </div>
-</div>
+  </div>
+</section>
 
-<div id="featured" class="featured-section">
-    <div class="section-header scroll-reveal">
-        <div class="section-subtitle">✨ FEATURED COLLECTION</div>
-        <h2 class="section-title">Handpicked For You</h2>
+<section class="categories-outer">
+  <div style="max-width:1360px; margin:0 auto;">
+    <div class="section-head reveal">
+      <div class="section-label">Shop by Need</div>
+      <h2 class="section-title">Choose Your <em>Wellness Path</em></h2>
+    </div>
+    <div class="cat-grid">
+      <a href="{% url 'haircare' %}" class="cat-card tall reveal">
+        <div class="cat-img" style="background-image:url('{% static 'images/hairaest.jpg' %}'); height:100%;"></div>
+        <div class="cat-overlay">
+          <div class="cat-eyebrow">Strength &amp; Shine</div>
+          <h3 class="cat-name">Haircare</h3>
+          <p class="cat-sub">Bhringraj elixirs, scalp tonics &amp; growth serums</p>
+          <span class="cat-link">Explore →</span>
+        </div>
+      </a>
+      <div class="cat-right">
+        <a href="{% url 'skincare' %}" class="cat-card short reveal" style="flex:1;">
+          <div class="cat-img" style="background-image:url('{% static 'images/skincareesdp.jpg' %}'); height:100%;"></div>
+          <div class="cat-overlay">
+            <div class="cat-eyebrow">Glow &amp; Nourish</div>
+            <h3 class="cat-name">Skincare</h3>
+            <p class="cat-sub">Radiance serums &amp; velvety butters</p>
+            <span class="cat-link">Explore →</span>
+          </div>
+        </a>
+        <a href="{% url 'medicines' %}" class="cat-card short reveal" style="flex:1;">
+          <div class="cat-img" style="background-image:url('{% static 'images/ayurvedicimg2.jpg' %}'); height:100%;"></div>
+          <div class="cat-overlay">
+            <div class="cat-eyebrow">Heal &amp; Restore</div>
+            <h3 class="cat-name">Medicines</h3>
+            <p class="cat-sub">Homeopathy &amp; herbal remedies</p>
+            <span class="cat-link">Explore →</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="why-section">
+  <div class="why-inner">
+    <div class="why-visual reveal">
+      <div class="why-main-img" style="background-image:url('{% static 'images/undergroundp.jpg' %}');"></div>
+      <div class="why-float-card">
+        <div class="float-number">200+</div>
+        <div class="float-label">Year-old Ayurvedic<br>formulations</div>
+      </div>
+    </div>
+    <div class="why-content reveal">
+      <div class="section-label">Why Dr Selvans Naturals</div>
+      <h2 class="section-title">Wellness Rooted<br>in <em>Ancient Wisdom</em></h2>
+      <p>We believe nature holds the answer to modern health challenges. Every product in our apothecary is formulated using time-tested Ayurvedic and Homeopathic principles, sourced from certified organic farms across India.</p>
+      <p>No harsh chemicals. No synthetic additives. Just pure, potent botanicals working in harmony with your body's own intelligence.</p>
+      <div class="pillars">
+        <div class="pillar">
+          <span class="pillar-icon">🌱</span>
+          <div class="pillar-name">Ethically Sourced</div>
+          <div class="pillar-sub">Direct from certified farmers</div>
+        </div>
+        <div class="pillar">
+          <span class="pillar-icon">🔬</span>
+          <div class="pillar-name">Lab Tested</div>
+          <div class="pillar-sub">Every batch, every time</div>
+        </div>
+        <div class="pillar">
+          <span class="pillar-icon">🐇</span>
+          <div class="pillar-name">Cruelty Free</div>
+          <div class="pillar-sub">Never tested on animals</div>
+        </div>
+        <div class="pillar">
+          <span class="pillar-icon">♻️</span>
+          <div class="pillar-name">Eco Packaging</div>
+          <div class="pillar-sub">Sustainable & recyclable</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="featured" class="featured-outer">
+  <div style="max-width:1360px; margin:0 auto;">
+    <div class="section-head reveal">
+      <div class="section-label">✨ Handpicked for You</div>
+      <h2 class="section-title">Featured <em>Collection</em></h2>
     </div>
     <div class="featured-grid">
-        {% for product in featured_products %}
-        <div class="featured-card" data-product-slug="{{ product.slug }}">
-            <div class="featured-img-wrapper">
-                {% if product.image %}
-                <div class="featured-img" style="background-image: url('{{ product.image.url }}');"></div>
-                {% else %}
-                <div class="featured-img" style="background-image: url('https://placehold.co/500x500/E8F0E4/4C7840?text={{ product.name|slice:":15" }}');"></div>
-                {% endif %}
-                <span class="featured-badge">
-                    {% if product.is_popular %}🔥 Popular{% else %}✨ Best Seller{% endif %}
-                </span>
-            </div>
-            <div class="featured-info">
-                <h3>{{ product.name }}</h3>
-                <p class="featured-desc">{{ product.short_desc|default:product.description|slice:":70" }}...</p>
-                <div class="featured-price-row">
-                    <span class="featured-price">₹{{ product.price }}</span>
-                    <div class="button-group-featured">
-                        <button class="featured-btn add-to-cart-btn" data-product-id="{{ product.id }}" data-product-name="{{ product.name }}"><i class="fas fa-shopping-bag"></i> Add</button>
-                        <button class="featured-buy-btn buy-now-btn" data-product-id="{{ product.id }}"><i class="fas fa-bolt"></i> Buy</button>
-                    </div>
-                </div>
-            </div>
+      {% for product in featured_products %}
+      <div class="product-card reveal" data-product-slug="{{ product.slug }}">
+        <div class="product-img-wrap">
+          {% if product.image %}
+          <div class="product-img" style="background-image:url('{{ product.image.url }}');"></div>
+          {% else %}
+          <div class="product-img" style="background-image:url('https://placehold.co/500x500/EFF5EB/4C7840?text={{ product.name|slice:":12" }}');"></div>
+          {% endif %}
+          <span class="product-badge">{% if product.is_popular %}🔥 Popular{% else %}✨ Best Seller{% endif %}</span>
         </div>
-        {% endfor %}
+        <div class="product-info">
+          <div class="product-cat">{{ product.get_category_display }}</div>
+          <div class="product-name">{{ product.name }}</div>
+          <div class="product-desc">{{ product.short_desc|default:product.description|slice:":72" }}...</div>
+          <div class="product-footer">
+            <div class="product-price">₹{{ product.price }}</div>
+            <div class="btn-group">
+              <button class="btn-cart add-to-cart-btn" data-product-id="{{ product.id }}" data-product-name="{{ product.name }}">
+                <i class="fas fa-bag-shopping"></i> Add
+              </button>
+              <button class="btn-buy buy-now-btn" data-product-id="{{ product.id }}">Buy Now</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
     </div>
-</div>
+  </div>
+</section>
 
-<div class="about-section scroll-reveal">
-    <div class="about-bordered-wrapper">
-        <div class="about-grid">
-            <div class="about-content">
-                <h2>The Science of Homeopathy</h2>
-                <p>Homeopathy is a natural system of medicine that works with your body's own healing mechanisms. Developed over 200 years ago, it's based on the principle of <strong>"like cures like"</strong> - using highly diluted natural substances to trigger the body's natural healing response.</p>
-                <p>Our homeopathic remedies are carefully prepared using traditional methods, ensuring purity and potency. Each remedy is selected to address specific health concerns while supporting overall wellness.</p>
-                <div class="about-features">
-                    <div class="feature-item">
-                        <i class="fas fa-leaf"></i>
-                        <span>100% Natural Ingredients</span>
-                    </div>
-                    <div class="feature-item">
-                        <i class="fas fa-flask"></i>
-                        <span>Scientifically Prepared</span>
-                    </div>
-                    <div class="feature-item">
-                        <i class="fas fa-heartbeat"></i>
-                        <span>No Side Effects</span>
-                    </div>
-                    <div class="feature-item">
-                        <i class="fas fa-globe"></i>
-                        <span>Globally Recognized</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="about-image-slider">
-                <div class="swiper about-swiper">
-                    <div class="swiper-wrapper">
-                        <div class="swiper-slide">
-                            <img src="{% static 'images/undergroundp.jpg' %}" alt="Homeopathy Remedies" class="slide-image" onerror="this.src='https://placehold.co/800x600/4C7840/white?text=Natural+Healing'">
-                        </div>
-                        <div class="swiper-slide">
-                            <img src="{% static 'images/downdp.jpg' %}" alt="Natural Healing" class="slide-image" onerror="this.src='https://placehold.co/800x600/3A5E30/white?text=Herbal+Remedies'">
-                        </div>
-                    </div>
-                    <div class="swiper-pagination"></div>
-                </div>
-            </div>
-        </div>
+<section class="science-section">
+  <div class="science-wrap reveal">
+    <div class="science-left">
+      <div class="section-label">The Science</div>
+      <h2 class="section-title">How <em>Homeopathy</em><br>Works</h2>
+      <p>Homeopathy is a 200-year-old natural healing system based on the principle of <strong>"like cures like"</strong> — using highly diluted natural substances to trigger the body's own healing intelligence.</p>
+      <p>Our remedies undergo meticulous potentisation — a precise process of serial dilution and succession — to unlock the therapeutic properties of each natural substance while making it completely safe and free from toxicity.</p>
+      <div class="pillars-2">
+        <div class="pillar2"><span class="pillar2-icon">🌿</span> 100% Natural</div>
+        <div class="pillar2"><span class="pillar2-icon">🔬</span> Scientifically Prepared</div>
+        <div class="pillar2"><span class="pillar2-icon">💚</span> No Side Effects</div>
+        <div class="pillar2"><span class="pillar2-icon">🌍</span> Globally Recognised</div>
+      </div>
     </div>
-</div>
+    <div class="science-right">
+      <div class="swiper science-swiper">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide sci-slide">
+            <img src="{% static 'images/undergroundp.jpg' %}" alt="Homeopathy Remedies" class="sci-img" onerror="this.src='https://placehold.co/700x600/4C7840/white?text=Natural+Healing'">
+          </div>
+          <div class="swiper-slide sci-slide">
+            <img src="{% static 'images/downdp.jpg' %}" alt="Natural Healing" class="sci-img" onerror="this.src='https://placehold.co/700x600/3A5E30/white?text=Herbal+Remedies'">
+          </div>
+        </div>
+        <div class="swiper-pagination"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="testimonials-section">
+  <div class="test-inner">
+    <div class="section-head reveal">
+      <div class="section-label">What Our Customers Say</div>
+      <h2 class="section-title">Real <em>Stories,</em><br>Real Results</h2>
+    </div>
+    <div class="testimonials-grid">
+      <div class="test-card reveal">
+        <div class="test-stars">★★★★★</div>
+        <p class="test-text">"Dr Selvans Naturals Bhringraj hair oil has completely transformed my hair. After 3 months of regular use, my hair fall has reduced by 80% and my scalp feels incredibly nourished. The quality is unmatched!"</p>
+        <div class="test-author">
+          <div class="test-avatar">PR</div>
+          <div>
+            <div class="test-name">Priya Rao</div>
+            <div class="test-loc">Mumbai</div>
+          </div>
+        </div>
+      </div>
+      <div class="test-card reveal">
+        <div class="test-stars">★★★★★</div>
+        <p class="test-text">"I was sceptical about homeopathy at first, but the Arnica Montana remedy from Dr Selvans for joint pain worked better than anything I had tried before. Truly remarkable results within weeks."</p>
+        <div class="test-author">
+          <div class="test-avatar">AM</div>
+          <div>
+            <div class="test-name">Anil Mehta</div>
+            <div class="test-loc">Mumbai</div>
+          </div>
+        </div>
+      </div>
+      <div class="test-card reveal">
+        <div class="test-stars">★★★★★</div>
+        <p class="test-text">"The Neem & Tulsi face wash by Dr Selvans Naturals is the only thing that has kept my acne-prone skin clear. Pure, effective, and my skin loves it. No more breakouts after 6 months of use!"</p>
+        <div class="test-author">
+          <div class="test-avatar">SK</div>
+          <div>
+            <div class="test-name">Sneha Kulkarni</div>
+            <div class="test-loc">Mumbai</div>
+          </div>
+        </div>
+      </div>
+      <div class="test-card reveal">
+        <div class="test-stars">★★★★★</div>
+        <p class="test-text">"Ashwagandha capsules from Dr Selvans Naturals have been a game changer for my stress and sleep quality. I feel more energetic and calm throughout the day. Highly recommend to everyone!"</p>
+        <div class="test-author">
+          <div class="test-avatar">RV</div>
+          <div>
+            <div class="test-name">Rajesh Verma</div>
+            <div class="test-loc">Mumbai</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <div id="toastMessage" class="custom-toast">
-    <i class="fas fa-check-circle"></i>
-    <span id="toastText">Product added to cart!</span>
+  <i class="fas fa-check-circle"></i>
+  <span id="toastText">Added to cart!</span>
 </div>
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        if (document.querySelector('.banner-swiper')) {
-            new Swiper('.banner-swiper', {
-                loop: true,
-                autoplay: { delay: 5000, disableOnInteraction: false },
-                pagination: { el: '.swiper-pagination', clickable: true },
-                navigation: false,
-                grabCursor: true,
-                effect: 'slide'
-            });
-        }
+document.addEventListener('DOMContentLoaded', function() {
 
-        if (document.querySelector('.about-swiper')) {
-            new Swiper('.about-swiper', {
-                loop: true,
-                autoplay: { delay: 4000, disableOnInteraction: false, pauseOnMouseEnter: true },
-                pagination: { el: '.swiper-pagination', clickable: true },
-                navigation: false,
-                grabCursor: true,
-                effect: 'slide',
-                speed: 600
-            });
-        }
-
-        const revealElements = document.querySelectorAll('.scroll-reveal');
-        function checkReveal() {
-            revealElements.forEach(el => {
-                const rect = el.getBoundingClientRect();
-                if (rect.top < window.innerHeight - 100) {
-                    el.classList.add('revealed');
-                }
-            });
-        }
-        window.addEventListener('scroll', checkReveal);
-        checkReveal();
+    new Swiper('.hero-swiper', {
+        loop: true,
+        autoplay: { delay: 5500, disableOnInteraction: false },
+        pagination: { el: '.hero-swiper .swiper-pagination', clickable: true },
+        navigation: false,
+        grabCursor: true,
+        speed: 900,
+        effect: 'fade',
+        fadeEffect: { crossFade: true }
     });
 
-    function showToast(message, isError = false) {
-        const toast = document.getElementById('toastMessage');
-        const toastText = document.getElementById('toastText');
-        toastText.innerText = message;
-        toast.style.background = isError ? '#e74c3c' : '#4C7840';
-        toast.classList.add('show');
-        setTimeout(() => {
-            toast.classList.remove('show');
-        }, 3000);
-    }
-    
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-    
-    const csrftoken = getCookie('csrftoken');
-    
-    async function addToCart(productId, productName) {
-        const btn = document.querySelector(`.add-to-cart-btn[data-product-id="${productId}"]`);
-        const originalText = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-        btn.disabled = true;
-        
-        try {
-            const response = await fetch(`/add-to-cart/${productId}/`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': csrftoken,
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: `quantity=2`
-            });
-            
-            if (response.ok) {
-                const cartCount = document.querySelector('.cart-count');
-                if (cartCount) {
-                    let currentCount = parseInt(cartCount.innerText) || 0;
-                    cartCount.innerText = currentCount + 2;
-                }
-                showToast(`✓ ${productName} added! (Min 2 pieces)`);
-                return true;
-            } else {
-                const error = await response.json();
-                showToast(error.error || 'Error adding to cart', true);
-                return false;
-            }
-        } catch (error) {
-            showToast('Error adding to cart', true);
-            return false;
-        } finally {
-            btn.innerHTML = originalText;
-            btn.disabled = false;
-        }
-    }
-    
-    async function buyNow(productId) {
-        const btn = document.querySelector(`.buy-now-btn[data-product-id="${productId}"]`);
-        const originalText = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-        btn.disabled = true;
-        
-        try {
-            const response = await fetch(`/add-to-cart/${productId}/`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': csrftoken,
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: `quantity=2&next=checkout`
-            });
-            
-            if (response.ok) {
-                window.location.href = '/checkout/';
-            } else {
-                showToast('Error processing', true);
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }
-        } catch (error) {
-            showToast('Error processing request', true);
-            btn.innerHTML = originalText;
-            btn.disabled = false;
-        }
-    }
-    
-    document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            addToCart(this.dataset.productId, this.dataset.productName);
-        });
+    new Swiper('.science-swiper', {
+        loop: true,
+        autoplay: { delay: 4000, disableOnInteraction: false, pauseOnMouseEnter: true },
+        pagination: { el: '.science-right .swiper-pagination', clickable: true },
+        navigation: false,
+        grabCursor: true,
+        speed: 700
     });
-    
-    document.querySelectorAll('.buy-now-btn').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            buyNow(this.dataset.productId);
-        });
-    });
-    
-    document.querySelectorAll('.popular-card, .featured-card').forEach(card => {
-        card.addEventListener('click', function(e) {
-            if (e.target.classList.contains('add-to-cart-btn') || 
-                e.target.classList.contains('buy-now-btn') ||
-                e.target.closest('.add-to-cart-btn') ||
-                e.target.closest('.buy-now-btn')) {
-                return;
-            }
-            const productSlug = this.dataset.productSlug;
-            if (productSlug) {
-                window.location.href = `/product/${productSlug}/`;
+
+    const revealEls = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry, i) => {
+            if (entry.isIntersecting) {
+                setTimeout(() => entry.target.classList.add('revealed'), i * 60);
+                observer.unobserve(entry.target);
             }
         });
+    }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+    revealEls.forEach(el => observer.observe(el));
+});
+
+function showToast(message, isError = false) {
+    const toast = document.getElementById('toastMessage');
+    document.getElementById('toastText').innerText = message;
+    toast.style.background = isError ? '#c0392b' : '#4C7840';
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3200);
+}
+
+function getCookie(name) {
+    let val = null;
+    document.cookie.split(';').forEach(c => {
+        c = c.trim();
+        if (c.startsWith(name + '=')) val = decodeURIComponent(c.split('=')[1]);
     });
+    return val;
+}
+const csrftoken = getCookie('csrftoken');
+
+async function addToCart(productId, productName) {
+    const btn = document.querySelector(`.add-to-cart-btn[data-product-id="${productId}"]`);
+    const orig = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    btn.disabled = true;
+    try {
+        const res = await fetch(`/add-to-cart/${productId}/`, {
+            method: 'POST',
+            headers: { 'X-CSRFToken': csrftoken, 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'quantity=2'
+        });
+        if (res.ok) {
+            const cc = document.querySelector('.cart-count');
+            if (cc) cc.innerText = (parseInt(cc.innerText) || 0) + 2;
+            showToast(`✓ ${productName} added! (Min 2 pcs)`);
+        } else {
+            const err = await res.json();
+            showToast(err.error || 'Error adding to cart', true);
+        }
+    } catch { showToast('Error adding to cart', true); }
+    finally { btn.innerHTML = orig; btn.disabled = false; }
+}
+
+async function buyNow(productId) {
+    const btn = document.querySelector(`.buy-now-btn[data-product-id="${productId}"]`);
+    const orig = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    btn.disabled = true;
+    try {
+        const res = await fetch(`/add-to-cart/${productId}/`, {
+            method: 'POST',
+            headers: { 'X-CSRFToken': csrftoken, 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'quantity=2&next=checkout'
+        });
+        if (res.ok) { window.location.href = '/checkout/'; }
+        else { showToast('Error processing', true); btn.innerHTML = orig; btn.disabled = false; }
+    } catch { showToast('Error processing', true); btn.innerHTML = orig; btn.disabled = false; }
+}
+
+document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+    btn.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); addToCart(btn.dataset.productId, btn.dataset.productName); });
+});
+document.querySelectorAll('.buy-now-btn').forEach(btn => {
+    btn.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); buyNow(btn.dataset.productId); });
+});
+
+document.querySelectorAll('.product-card').forEach(card => {
+    card.addEventListener('click', e => {
+        if (e.target.closest('.btn-cart, .btn-buy')) return;
+        const slug = card.dataset.productSlug;
+        if (slug) window.location.href = `/product/${slug}/`;
+    });
+});
 </script>
 {% endblock %}
